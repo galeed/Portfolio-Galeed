@@ -40,27 +40,34 @@
             color: white;
             text-shadow: 1px 1px 2px black;
             text-decoration: none;
-            transition: transform 0.1s;
+            padding: 5px;
+            border: 1px dotted transparent; /* Borde punteado para selección */
             user-select: none;
         }
 
-        .project-icon:hover {
-            transform: scale(1.05);
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
+        /* Estado seleccionado (como en Windows 98) */
+        .project-icon.selected {
+            background-color: #000080; /* Azul oscuro de selección */
+            border: 1px dotted #fff;
         }
 
-        .project-icon img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 5px;
-            image-rendering: pixelated; 
-        }
-
+        /* El texto se vuelve azul si no está seleccionado, o se queda blanco si lo está */
         .project-icon span {
             font-size: 12px;
             line-height: 1.2;
             word-wrap: break-word;
+            color: white; 
+        }
+
+        .project-icon.selected span {
+            color: white; /* Mantenemos blanco para que contraste con el fondo azul */
+        }
+
+        .icon-emoji {
+            font-size: 40px; 
+            line-height: 1; 
+            margin-bottom: 5px; 
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
         }
 
         /* --- LOGO FLOTANTE --- */
@@ -73,21 +80,12 @@
             z-index: 0;
             opacity: 0.8;
         }
-
         .watermark-logo h1 {
-            color: #fff;
-            font-size: 2rem;
-            text-shadow: 3px 3px 0px #d48fb3;
-            font-family: 'Arial Black', sans-serif;
-            line-height: 0.9;
-            letter-spacing: -1px;
+            color: #fff; font-size: 2rem; text-shadow: 3px 3px 0px #d48fb3;
+            font-family: 'Arial Black', sans-serif; line-height: 0.9; letter-spacing: -1px;
         }
-
         .watermark-logo span {
-            font-size: 0.8rem;
-            display: block;
-            color: #fff;
-            text-shadow: 1px 1px 0px #d48fb3;
+            font-size: 0.8rem; display: block; color: #fff; text-shadow: 1px 1px 0px #d48fb3;
         }
 
         /* --- BARRA DE TAREAS --- */
@@ -101,6 +99,7 @@
             padding: 0 5px;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
             z-index: 100;
+            position: relative;
         }
 
         .start-btn {
@@ -119,14 +118,17 @@
             cursor: pointer;
             height: 30px;
             box-shadow: inset 1px 1px 0px #dfdfdf;
+            position: relative;
+            z-index: 101; /* Por encima de la barra de tareas */
         }
         
-        .start-btn:active {
+        .start-btn:active, .start-btn.open {
             border-top-color: #808080;
             border-left-color: #808080;
             border-bottom-color: #fff;
             border-right-color: #fff;
             padding: 6px 9px 4px 11px;
+            background-color: #d4d4d4;
         }
 
         .start-btn img { width: 16px; height: 16px; }
@@ -149,6 +151,82 @@
             padding-right: 5px;
         }
 
+        /* --- MENÚ DE INICIO (START MENU) --- */
+        .start-menu {
+            position: absolute;
+            bottom: 40px; /* Justo encima de la barra de tareas */
+            left: 5px;
+            width: 250px;
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            display: none; /* Oculto por defecto */
+            flex-direction: column;
+            z-index: 99;
+        }
+
+        .start-menu.open {
+            display: flex;
+        }
+
+        /* Cabecera lateral azul (opcional, para estilo más clásico) */
+        .start-menu-header {
+            background: linear-gradient(to bottom, #000080, #1084d0);
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        .start-menu-list {
+            margin-left: 30px; /* Espacio para la cabecera */
+            display: flex;
+            flex-direction: column;
+            padding: 2px;
+        }
+
+        .start-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .start-item:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        .start-item .icon-emoji {
+            font-size: 24px;
+            margin-bottom: 0;
+            filter: none; /* Quitar sombra en menú */
+        }
+
+        .start-item span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* --- VENTANAS FLOTANTES (MODALES) --- */
         .window-modal {
             position: absolute;
@@ -156,23 +234,20 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 400px;
-            background-color: #c0c0c0; /* Gris clásico Windows */
+            background-color: #c0c0c0;
             border: 2px solid #fff;
             border-right-color: #808080;
             border-bottom-color: #808080;
             box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-            display: none; /* Oculto por defecto */
+            display: none;
             flex-direction: column;
             z-index: 1000;
         }
 
-        .window-modal.active {
-            display: flex;
-        }
+        .window-modal.active { display: flex; }
 
-        /* Barra de título de la ventana */
         .window-header {
-            background: linear-gradient(90deg, #000080, #1084d0); /* Azul clásico */
+            background: linear-gradient(90deg, #000080, #1084d0);
             color: white;
             padding: 3px 5px;
             display: flex;
@@ -180,48 +255,24 @@
             align-items: center;
             font-weight: bold;
             font-size: 12px;
-            cursor: move; /* Para arrastrar */
+            cursor: move;
             user-select: none;
         }
 
-        .window-title {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding-left: 2px;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 2px;
-        }
+        .window-title { display: flex; align-items: center; gap: 5px; padding-left: 2px; }
+        .window-controls { display: flex; gap: 2px; }
 
         .win-btn {
-            width: 16px;
-            height: 14px;
-            background-color: #c0c0c0;
-            border: 1px solid #fff;
-            border-right-color: #808080;
-            border-bottom-color: #808080;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            color: black;
+            width: 16px; height: 14px; background-color: #c0c0c0;
+            border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 10px; font-weight: bold; cursor: pointer; color: black;
         }
+        .win-btn:active { border: 1px solid #808080; border-right-color: #fff; border-bottom-color: #fff; }
 
-        .win-btn:active {
-            border: 1px solid #808080;
-            border-right-color: #fff;
-            border-bottom-color: #fff;
-        }
-
-        /* Contenido de la ventana */
         .window-content {
             padding: 20px;
-            background-color: #fff; /* Blanco interior */
+            background-color: #fff;
             margin: 2px;
             border: 2px solid #808080;
             border-right-color: #fff;
@@ -231,53 +282,21 @@
             gap: 15px;
         }
 
-        .window-content h2 {
-            font-size: 18px;
-            color: #000080;
-            margin-bottom: 5px;
-        }
+        .window-content h2 { font-size: 18px; color: #000080; margin-bottom: 5px; }
+        .window-content p { font-size: 14px; color: #333; line-height: 1.4; }
 
-        .window-content p {
-            font-size: 14px;
-            color: #333;
-            line-height: 1.4;
-        }
-
-        /* Botón de acción dentro de la ventana */
         .action-btn {
             background-color: #c0c0c0;
-            border: 2px solid #fff;
-            border-right-color: #808080;
-            border-bottom-color: #808080;
-            padding: 8px 15px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            color: black;
-            display: inline-block;
-            margin-top: 10px;
-            align-self: flex-start;
+            border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            padding: 8px 15px; font-weight: bold; font-size: 14px;
+            cursor: pointer; text-align: center; text-decoration: none; color: black;
+            display: inline-block; margin-top: 10px; align-self: flex-start;
         }
+        .action-btn:active { border: 2px solid #808080; border-right-color: #fff; border-bottom-color: #fff; padding: 9px 14px 7px 16px; }
 
-        .action-btn:active {
-            border: 2px solid #808080;
-            border-right-color: #fff;
-            border-bottom-color: #fff;
-            padding: 9px 14px 7px 16px;
-        }
-
-        /* Fondo oscuro semitransparente cuando hay una ventana abierta */
         .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            display: none;
-            z-index: 999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); display: none; z-index: 999;
         }
         .overlay.active { display: block; }
 
@@ -286,9 +305,7 @@
 <body>
 
     <!-- ZONA DE ESCRITORIO -->
-    <main class="desktop" id="desktop">
-        <!-- Los iconos se generan con JavaScript -->
-    </main>
+    <main class="desktop" id="desktop"></main>
 
     <!-- LOGO FLOTANTE -->
     <div class="watermark-logo">
@@ -296,16 +313,22 @@
         <span>de Chat Lab</span>
     </div>
 
+    <!-- MENÚ DE INICIO -->
+    <div class="start-menu" id="start-menu">
+        <div class="start-menu-header">Moustache</div>
+        <div class="start-menu-list" id="start-menu-list">
+            <!-- Los items se generan con JS -->
+        </div>
+    </div>
+
     <!-- BARRA DE TAREAS -->
     <footer class="taskbar">
-        <button class="start-btn">
+        <button class="start-btn" id="start-btn">
             <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
             Inicio
         </button>
         <div class="divider"></div>
-        <div id="taskbar-status" style="font-size: 11px; color: #555;">
-            <!-- Aquí aparecerá el nombre del proyecto abierto -->
-        </div>
+        <div id="taskbar-status" style="font-size: 11px; color: #555;"></div>
         <div class="system-tray">
             <span>🔊</span>
             <span>🌐</span>
@@ -313,15 +336,15 @@
         </div>
     </footer>
 
-    <!-- OVERLAY (Fondo oscuro) -->
+    <!-- OVERLAY -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- VENTANA MODAL (Plantilla única que se rellena con JS) -->
+    <!-- VENTANA MODAL -->
     <div class="window-modal" id="project-window">
         <div class="window-header" id="window-header">
             <div class="window-title">
                 <span id="modal-icon">📁</span>
-                <span id="modal-title">Título del Proyecto</span>
+                <span id="modal-title">Título</span>
             </div>
             <div class="window-controls">
                 <div class="win-btn" id="close-btn">X</div>
@@ -329,16 +352,13 @@
         </div>
         <div class="window-content">
             <h2 id="modal-heading">Nombre</h2>
-            <p id="modal-desc">Descripción del proyecto...</p>
-            <a href="#" target="_blank" class="action-btn" id="modal-link">
-                ↗ Abrir App
-            </a>
+            <p id="modal-desc">Descripción...</p>
+            <a href="#" target="_blank" class="action-btn" id="modal-link">↗ Abrir App</a>
         </div>
     </div>
 
     <script>
         // --- DATOS DE TUS PROYECTOS ---
-        // Puedes cambiar los iconos por emojis o buscar PNGs específicos
         const projects = [
             { id: 1, name: "Audio Michi App", desc: "Herramienta de audio 100% local en el navegador.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎧" },
             { id: 2, name: "Miaulement Conversor", desc: "Conversor de formatos de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎼" },
@@ -354,7 +374,11 @@
             { id: 12, name: "Libreta de Notas", desc: "Bloc de notas rápido.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "📓" }
         ];
 
+        // Referencias DOM
         const desktop = document.getElementById('desktop');
+        const startMenuList = document.getElementById('start-menu-list');
+        const startBtn = document.getElementById('start-btn');
+        const startMenu = document.getElementById('start-menu');
         const modal = document.getElementById('project-window');
         const overlay = document.getElementById('overlay');
         const closeBtn = document.getElementById('close-btn');
@@ -365,40 +389,102 @@
         const modalIcon = document.getElementById('modal-icon');
         const taskbarStatus = document.getElementById('taskbar-status');
 
+        let selectedIcon = null; // Para rastrear el icono seleccionado
+
         // --- 1. GENERAR ICONOS EN EL ESCRITORIO ---
         projects.forEach(project => {
-            const a = document.createElement('div');
-            a.className = 'project-icon';
-            a.innerHTML = `
-                <div style="font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));">${project.icon}</div>
+            const div = document.createElement('div');
+            div.className = 'project-icon';
+            div.innerHTML = `
+                <div class="icon-emoji">${project.icon}</div>
                 <span>${project.name}</span>
             `;
             
-            // Evento al hacer doble clic (como en Windows real)
-            a.addEventListener('dblclick', () => openWindow(project));
+            // Evento de un solo clic: Seleccionar
+            div.addEventListener('click', (e) => {
+                e.stopPropagation(); // Evita que el clic se propague al escritorio
+                selectIcon(div);
+            });
+
+            // Evento de doble clic: Abrir ventana
+            div.addEventListener('dblclick', () => openWindow(project));
             
-            desktop.appendChild(a);
+            desktop.appendChild(div);
         });
 
-        // --- 2. LÓGICA DE LA VENTANA ---
+        // --- 2. GENERAR EL MENÚ DE INICIO ---
+        projects.forEach(project => {
+            const item = document.createElement('div');
+            item.className = 'start-item';
+            item.innerHTML = `
+                <div class="icon-emoji">${project.icon}</div>
+                <span>${project.name}</span>
+            `;
+            item.addEventListener('click', () => {
+                openWindow(project);
+                closeStartMenu(); // Cerramos el menú al abrir un proyecto
+            });
+            startMenuList.appendChild(item);
+        });
+
+        // --- 3. LÓGICA DE SELECCIÓN Y ESCRITORIO ---
+        function selectIcon(iconElement) {
+            // Si ya había uno seleccionado, lo desmarcamos
+            if (selectedIcon) {
+                selectedIcon.classList.remove('selected');
+            }
+            // Marcamos el nuevo
+            iconElement.classList.add('selected');
+            selectedIcon = iconElement;
+        }
+
+        // Clic en el escritorio vacío para deseleccionar
+        desktop.addEventListener('click', () => {
+            if (selectedIcon) {
+                selectedIcon.classList.remove('selected');
+                selectedIcon = null;
+            }
+        });
+
+        // --- 4. LÓGICA DEL MENÚ DE INICIO ---
+        function toggleStartMenu() {
+            startMenu.classList.toggle('open');
+            startBtn.classList.toggle('open');
+        }
+
+        function closeStartMenu() {
+            startMenu.classList.remove('open');
+            startBtn.classList.remove('open');
+        }
+
+        startBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita que se cierre inmediatamente
+            toggleStartMenu();
+        });
+
+        // Cerrar el menú de inicio si se hace clic fuera de él
+        document.addEventListener('click', (e) => {
+            if (!startMenu.contains(e.target) && !startBtn.contains(e.target)) {
+                closeStartMenu();
+            }
+        });
+
+        // --- 5. LÓGICA DE LA VENTANA FLOTANTE ---
         function openWindow(project) {
-            // Rellenar datos
             modalTitle.textContent = project.name + " - Moustache Lab";
             modalHeading.textContent = project.name;
             modalDesc.textContent = project.desc;
             modalLink.href = project.url;
             modalIcon.textContent = project.icon;
             
-            // Mostrar ventana y overlay
             modal.classList.add('active');
             overlay.classList.add('active');
-            
-            // Actualizar barra de tareas
             taskbarStatus.textContent = "Abierto: " + project.name;
             
-            // Resetear posición de la ventana al centro
+            // Centrar ventana
             modal.style.top = '50%';
             modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
         }
 
         function closeWindow() {
@@ -410,19 +496,17 @@
         closeBtn.addEventListener('click', closeWindow);
         overlay.addEventListener('click', closeWindow);
 
-        // --- 3. LÓGICA PARA ARRASTRAR LA VENTANA ---
+        // --- 6. ARRASTRAR VENTANA ---
         const windowHeader = document.getElementById('window-header');
         let isDragging = false;
         let offsetX, offsetY;
 
         windowHeader.addEventListener('mousedown', (e) => {
             isDragging = true;
-            // Calculamos el offset respecto a la posición de la ventana
             const rect = modal.getBoundingClientRect();
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
             
-            // Quitamos la transformación de centrado para que el arrastre sea fluido
             modal.style.transform = 'none';
             modal.style.left = rect.left + 'px';
             modal.style.top = rect.top + 'px';
@@ -434,9 +518,8 @@
             let newX = e.clientX - offsetX;
             let newY = e.clientY - offsetY;
             
-            // Limitar para que no se salga de la pantalla
             const maxX = window.innerWidth - modal.offsetWidth;
-            const maxY = window.innerHeight - modal.offsetHeight - 40; // 40 es la barra de tareas
+            const maxY = window.innerHeight - modal.offsetHeight - 40;
             
             if (newX < 0) newX = 0;
             if (newY < 0) newY = 0;
@@ -447,11 +530,9 @@
             modal.style.top = newY + 'px';
         });
 
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
+        document.addEventListener('mouseup', () => { isDragging = false; });
 
-        // --- 4. RELOJ ---
+        // --- 7. RELOJ ---
         function updateClock() {
             const now = new Date();
             let hours = now.getHours();
