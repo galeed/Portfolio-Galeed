@@ -3,34 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Proyectos - Win98 Style</title>
+    <title>Moustache de Chat Lab - Win98 Style</title>
     <style>
         /* --- CONFIGURACIÓN GENERAL --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            /* El azul cielo de la imagen */
-            background-color: #6da2d8; 
+            background-color: #6da2d8; /* Azul cielo */
             font-family: 'MS Sans Serif', 'Pixelated', sans-serif;
             height: 100vh;
-            overflow: hidden; /* Para que no haya scroll como en un escritorio real */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        /* --- ZONA DEL ESCRITORIO (Donde irían tus proyectos) --- */
+        /* --- ESCRITORIO --- */
         .desktop {
             flex-grow: 1;
             padding: 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, 90px); /* Cuadrícula de iconos */
+            grid-template-columns: repeat(auto-fill, 90px);
             gap: 20px;
             align-content: start;
+            position: relative;
+            z-index: 1;
         }
 
         /* --- ICONOS DE PROYECTOS --- */
@@ -44,6 +41,7 @@
             text-shadow: 1px 1px 2px black;
             text-decoration: none;
             transition: transform 0.1s;
+            user-select: none;
         }
 
         .project-icon:hover {
@@ -56,24 +54,30 @@
             width: 48px;
             height: 48px;
             margin-bottom: 5px;
-            /* Filtro para que los iconos se vean un poco más retro */
             image-rendering: pixelated; 
         }
 
-        /* --- LOGO FLOTANTE (El de la imagen) --- */
+        .project-icon span {
+            font-size: 12px;
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
+
+        /* --- LOGO FLOTANTE --- */
         .watermark-logo {
             position: absolute;
-            bottom: 80px; /* Un poco arriba de la barra de tareas */
-            right: 40px;
+            bottom: 60px;
+            right: 30px;
             text-align: right;
-            pointer-events: none; /* No interfiere con los clicks */
-            z-index: 1;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.8;
         }
 
         .watermark-logo h1 {
             color: #fff;
             font-size: 2rem;
-            text-shadow: 3px 3px 0px #d48fb3; /* Sombra rosa */
+            text-shadow: 3px 3px 0px #d48fb3;
             font-family: 'Arial Black', sans-serif;
             line-height: 0.9;
             letter-spacing: -1px;
@@ -86,12 +90,12 @@
             text-shadow: 1px 1px 0px #d48fb3;
         }
 
-        /* --- BARRA DE TAREAS (Estilo Rosa) --- */
+        /* --- BARRA DE TAREAS --- */
         .taskbar {
             height: 40px;
-            background-color: #f3c1d7; /* Rosa pastel */
-            border-top: 2px solid #fff; /* Brillo superior */
-            border-bottom: 2px solid #a36d87; /* Sombra inferior */
+            background-color: #f3c1d7;
+            border-top: 2px solid #fff;
+            border-bottom: 2px solid #a36d87;
             display: flex;
             align-items: center;
             padding: 0 5px;
@@ -99,9 +103,8 @@
             z-index: 100;
         }
 
-        /* Botón de Inicio */
         .start-btn {
-            background-color: #e6e6e6; /* Gris clásico de Windows */
+            background-color: #e6e6e6;
             border: 1px solid #000;
             border-top-color: #fff;
             border-left-color: #fff;
@@ -109,7 +112,6 @@
             border-right-color: #808080;
             padding: 5px 10px;
             font-weight: bold;
-            font-family: 'MS Sans Serif', sans-serif;
             font-size: 12px;
             display: flex;
             align-items: center;
@@ -124,15 +126,11 @@
             border-left-color: #808080;
             border-bottom-color: #fff;
             border-right-color: #fff;
-            padding: 6px 9px 4px 11px; /* Efecto de presión */
+            padding: 6px 9px 4px 11px;
         }
 
-        .start-btn img {
-            width: 16px;
-            height: 16px;
-        }
+        .start-btn img { width: 16px; height: 16px; }
 
-        /* Separador de la barra */
         .divider {
             width: 2px;
             height: 20px;
@@ -141,9 +139,8 @@
             margin: 0 10px;
         }
 
-        /* Reloj y bandeja del sistema */
         .system-tray {
-            margin-left: auto; /* Empuja a la derecha */
+            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -152,84 +149,322 @@
             padding-right: 5px;
         }
 
-        /* Iconos de la bandeja */
-        .tray-icon {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
+        /* --- VENTANAS FLOTANTES (MODALES) --- */
+        .window-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: #c0c0c0; /* Gris clásico Windows */
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            display: none; /* Oculto por defecto */
+            flex-direction: column;
+            z-index: 1000;
         }
+
+        .window-modal.active {
+            display: flex;
+        }
+
+        /* Barra de título de la ventana */
+        .window-header {
+            background: linear-gradient(90deg, #000080, #1084d0); /* Azul clásico */
+            color: white;
+            padding: 3px 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: move; /* Para arrastrar */
+            user-select: none;
+        }
+
+        .window-title {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding-left: 2px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .win-btn {
+            width: 16px;
+            height: 14px;
+            background-color: #c0c0c0;
+            border: 1px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            color: black;
+        }
+
+        .win-btn:active {
+            border: 1px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        /* Contenido de la ventana */
+        .window-content {
+            padding: 20px;
+            background-color: #fff; /* Blanco interior */
+            margin: 2px;
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .window-content h2 {
+            font-size: 18px;
+            color: #000080;
+            margin-bottom: 5px;
+        }
+
+        .window-content p {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* Botón de acción dentro de la ventana */
+        .action-btn {
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: black;
+            display: inline-block;
+            margin-top: 10px;
+            align-self: flex-start;
+        }
+
+        .action-btn:active {
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            padding: 9px 14px 7px 16px;
+        }
+
+        /* Fondo oscuro semitransparente cuando hay una ventana abierta */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
+        }
+        .overlay.active { display: block; }
 
     </style>
 </head>
 <body>
 
     <!-- ZONA DE ESCRITORIO -->
-    <main class="desktop">
-        <!-- Icono de Proyecto 1 -->
-        <a href="#" class="project-icon">
-            <!-- Puedes cambiar esto por un icono real o un emoji -->
-            <img src="https://win98icons.alexmeub.com/icons/png/folder_closed-4.png" alt="Carpeta">
-            <span>Proyecto 1</span>
-        </a>
-
-        <!-- Icono de Proyecto 2 -->
-        <a href="#" class="project-icon">
-            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png" alt="PC">
-            <span>Web App</span>
-        </a>
-
-        <!-- Icono de Proyecto 3 -->
-        <a href="#" class="project-icon">
-            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" alt="Internet">
-            <span>Portafolio</span>
-        </a>
+    <main class="desktop" id="desktop">
+        <!-- Los iconos se generan con JavaScript -->
     </main>
 
-    <!-- LOGO FLOTANTE (Estilo Windows 98 Mobile) -->
+    <!-- LOGO FLOTANTE -->
     <div class="watermark-logo">
-        <!-- Aquí puedes poner una imagen real si tienes el logo -->
-        <h1>Windows 98</h1>
-        <span>Mobile Projects</span>
+        <h1>Moustache</h1>
+        <span>de Chat Lab</span>
     </div>
 
-    <!-- BARRA DE TAREAS ROSA -->
+    <!-- BARRA DE TAREAS -->
     <footer class="taskbar">
         <button class="start-btn">
-            <!-- Icono de inicio clásico -->
             <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
             Inicio
         </button>
-        
         <div class="divider"></div>
-        
-        <!-- Botones de ventanas abiertas (puedes agregar proyectos aquí) -->
-        <div style="font-size: 11px; padding: 0 10px; border: 1px solid #a36d87; border-right-color: #fff; height: 25px; display: flex; align-items: center; background: #f9dbe8;">
-            Mis Proyectos
+        <div id="taskbar-status" style="font-size: 11px; color: #555;">
+            <!-- Aquí aparecerá el nombre del proyecto abierto -->
         </div>
-
         <div class="system-tray">
-            <!-- Iconos de volumen y red (opcionales) -->
             <span>🔊</span>
             <span>🌐</span>
-            <span id="clock">8:52 PM</span>
+            <span id="clock">--:--</span>
         </div>
     </footer>
 
+    <!-- OVERLAY (Fondo oscuro) -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- VENTANA MODAL (Plantilla única que se rellena con JS) -->
+    <div class="window-modal" id="project-window">
+        <div class="window-header" id="window-header">
+            <div class="window-title">
+                <span id="modal-icon">📁</span>
+                <span id="modal-title">Título del Proyecto</span>
+            </div>
+            <div class="window-controls">
+                <div class="win-btn" id="close-btn">X</div>
+            </div>
+        </div>
+        <div class="window-content">
+            <h2 id="modal-heading">Nombre</h2>
+            <p id="modal-desc">Descripción del proyecto...</p>
+            <a href="#" target="_blank" class="action-btn" id="modal-link">
+                ↗ Abrir App
+            </a>
+        </div>
+    </div>
+
     <script>
-        // Script simple para que el reloj funcione
+        // --- DATOS DE TUS PROYECTOS ---
+        // Puedes cambiar los iconos por emojis o buscar PNGs específicos
+        const projects = [
+            { id: 1, name: "Audio Michi App", desc: "Herramienta de audio 100% local en el navegador.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎧" },
+            { id: 2, name: "Miaulement Conversor", desc: "Conversor de formatos de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎼" },
+            { id: 3, name: "Video Michi App", desc: "Editor y procesador de video local.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎥" },
+            { id: 4, name: "Moustache Mastering", desc: "Herramienta de masterización de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎵" },
+            { id: 5, name: "S Canvas Generator", desc: "Generador de gráficos y canvas.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🖼️" },
+            { id: 6, name: "Meow Espectograma", desc: "Visualizador de espectrograma de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "📊" },
+            { id: 7, name: "Reproductor Online", desc: "Reproductor de música en línea.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "▶️" },
+            { id: 8, name: "Michi Red Book", desc: "Mastering estilo Red Book.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "💿" },
+            { id: 9, name: "HTML App", desc: "Aplicación web genérica.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🌐" },
+            { id: 10, name: "MusicApp", desc: "Reproducción y almacenamiento online (Requiere registro).", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎶" },
+            { id: 11, name: "Michi Loudness", desc: "Medidor de loudness y análisis.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🔊" },
+            { id: 12, name: "Libreta de Notas", desc: "Bloc de notas rápido.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "📓" }
+        ];
+
+        const desktop = document.getElementById('desktop');
+        const modal = document.getElementById('project-window');
+        const overlay = document.getElementById('overlay');
+        const closeBtn = document.getElementById('close-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const modalHeading = document.getElementById('modal-heading');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalLink = document.getElementById('modal-link');
+        const modalIcon = document.getElementById('modal-icon');
+        const taskbarStatus = document.getElementById('taskbar-status');
+
+        // --- 1. GENERAR ICONOS EN EL ESCRITORIO ---
+        projects.forEach(project => {
+            const a = document.createElement('div');
+            a.className = 'project-icon';
+            a.innerHTML = `
+                <div style="font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));">${project.icon}</div>
+                <span>${project.name}</span>
+            `;
+            
+            // Evento al hacer doble clic (como en Windows real)
+            a.addEventListener('dblclick', () => openWindow(project));
+            
+            desktop.appendChild(a);
+        });
+
+        // --- 2. LÓGICA DE LA VENTANA ---
+        function openWindow(project) {
+            // Rellenar datos
+            modalTitle.textContent = project.name + " - Moustache Lab";
+            modalHeading.textContent = project.name;
+            modalDesc.textContent = project.desc;
+            modalLink.href = project.url;
+            modalIcon.textContent = project.icon;
+            
+            // Mostrar ventana y overlay
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            
+            // Actualizar barra de tareas
+            taskbarStatus.textContent = "Abierto: " + project.name;
+            
+            // Resetear posición de la ventana al centro
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+        }
+
+        function closeWindow() {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            taskbarStatus.textContent = "";
+        }
+
+        closeBtn.addEventListener('click', closeWindow);
+        overlay.addEventListener('click', closeWindow);
+
+        // --- 3. LÓGICA PARA ARRASTRAR LA VENTANA ---
+        const windowHeader = document.getElementById('window-header');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        windowHeader.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            // Calculamos el offset respecto a la posición de la ventana
+            const rect = modal.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            
+            // Quitamos la transformación de centrado para que el arrastre sea fluido
+            modal.style.transform = 'none';
+            modal.style.left = rect.left + 'px';
+            modal.style.top = rect.top + 'px';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            let newX = e.clientX - offsetX;
+            let newY = e.clientY - offsetY;
+            
+            // Limitar para que no se salga de la pantalla
+            const maxX = window.innerWidth - modal.offsetWidth;
+            const maxY = window.innerHeight - modal.offsetHeight - 40; // 40 es la barra de tareas
+            
+            if (newX < 0) newX = 0;
+            if (newY < 0) newY = 0;
+            if (newX > maxX) newX = maxX;
+            if (newY > maxY) newY = maxY;
+
+            modal.style.left = newX + 'px';
+            modal.style.top = newY + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // --- 4. RELOJ ---
         function updateClock() {
             const now = new Date();
             let hours = now.getHours();
             let minutes = now.getMinutes();
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
-            hours = hours ? hours : 12; // la hora '0' debería ser '12'
+            hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0' + minutes : minutes;
-            const strTime = hours + ':' + minutes + ' ' + ampm;
-            document.getElementById('clock').textContent = strTime;
+            document.getElementById('clock').textContent = hours + ':' + minutes + ' ' + ampm;
         }
         setInterval(updateClock, 1000);
         updateClock();
+
     </script>
 </body>
 </html>
