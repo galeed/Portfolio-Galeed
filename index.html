@@ -3,114 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moustache de Chat Lab - Win98 Style</title>
+    <title>Moustache de Chat Lab - Themes</title>
     <style>
+        /* --- VARIABLES DE TEMA (Por defecto: Win98) --- */
+        :root {
+            /* Colores Base */
+            --bg-desktop: #6da2d8;
+            --bg-taskbar: #f3c1d7;
+            --bg-window: #c0c0c0;
+            --bg-window-content: #ffffff;
+            --text-main: #000000;
+            --text-light: #ffffff;
+            --text-title: #ffffff;
+            --border-light: #ffffff;
+            --border-dark: #808080;
+            --highlight: #000080;
+            --font-main: 'MS Sans Serif', 'Pixelated', sans-serif;
+            --font-title: 'Arial Black', sans-serif;
+            --window-radius: 0px;
+            --shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* --- TEMA TUI (Terminal) --- */
+        body.theme-tui {
+            --bg-desktop: #0a0a0a;
+            --bg-taskbar: #111111;
+            --bg-window: #1a1a1a;
+            --bg-window-content: #000000;
+            --text-main: #33ff33; /* Verde fósforo */
+            --text-light: #33ff33;
+            --text-title: #33ff33;
+            --border-light: #33ff33;
+            --border-dark: #004400;
+            --highlight: #33ff33;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-title: 'Courier New', Courier, monospace;
+            --window-radius: 4px;
+            --shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+        }
+
+        /* --- TEMA DISTRO (Moderno/Oscuro) --- */
+        body.theme-distro {
+            --bg-desktop: #121212;
+            --bg-taskbar: #1e1e1e;
+            --bg-window: #2d2d2d;
+            --bg-window-content: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-light: #ffffff;
+            --text-title: #ffffff;
+            --border-light: #444444;
+            --border-dark: #111111;
+            --highlight: #00bcd4; /* Acento cyan/neón */
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-title: 'Segoe UI', sans-serif;
+            --window-radius: 8px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+
         /* --- CONFIGURACIÓN GENERAL --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            background-color: #6da2d8;
-            font-family: 'MS Sans Serif', 'Pixelated', sans-serif;
+            background-color: var(--bg-desktop);
+            font-family: var(--font-main);
+            color: var(--text-main);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* --- PANTALLA DE INICIO (SPLASH SCREEN) --- */
+        /* --- PANTALLA DE INICIO (SPLASH) --- */
         #splash-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000; /* Fondo negro clásico de arranque */
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            transition: opacity 1s ease-out;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; transition: opacity 1s ease-out;
         }
 
         .splash-logo {
-            font-family: 'Arial Black', sans-serif;
-            font-size: 3rem;
-            color: #fff;
-            text-shadow: 3px 3px 0px #d48fb3; /* Sombra rosa para combinar */
-            margin-bottom: 20px;
-            letter-spacing: -2px;
+            font-family: var(--font-title); font-size: 3rem;
+            color: #fff; text-shadow: 3px 3px 0px #d48fb3;
+            margin-bottom: 20px; letter-spacing: -2px;
         }
 
-        .splash-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            color: #ccc;
-        }
+        .splash-subtitle { font-size: 1.2rem; margin-bottom: 40px; color: #ccc; }
 
-        /* Barra de carga estilo Windows 98 */
         .loading-bar-container {
-            width: 300px;
-            height: 20px;
-            border: 2px solid #fff;
-            padding: 2px;
-            background-color: #000;
-            display: flex;
-            gap: 2px;
+            width: 300px; height: 20px; border: 2px solid #fff;
+            padding: 2px; background-color: #000;
+            display: flex; gap: 2px;
         }
 
         .loading-block {
-            width: 20px;
-            height: 100%;
-            background-color: #000080; /* Azul de Windows */
-            opacity: 0;
+            width: 20px; height: 100%; background-color: #000080; opacity: 0;
         }
 
-        /* Animación de los bloques de carga */
         @keyframes loadBlock {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
+            0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
         }
 
         .splash-options {
-            margin-top: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        .splash-options input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .splash-options label {
-            cursor: pointer;
+            margin-top: 30px; display: flex; align-items: center; gap: 10px;
+            font-size: 14px; color: #ccc;
         }
 
         #skip-splash-btn {
-            margin-top: 20px;
-            background-color: #c0c0c0;
-            border: 2px solid #fff;
-            border-right-color: #808080;
-            border-bottom-color: #808080;
-            padding: 8px 20px;
-            font-weight: bold;
-            font-family: 'MS Sans Serif', sans-serif;
-            cursor: pointer;
-            font-size: 14px;
+            margin-top: 20px; background-color: #c0c0c0;
+            border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            padding: 8px 20px; font-weight: bold; cursor: pointer; font-size: 14px;
+            font-family: sans-serif;
         }
 
-        #skip-splash-btn:active {
-            border: 2px solid #808080;
-            border-right-color: #fff;
-            border-bottom-color: #fff;
-        }
-
-        /* --- RESTO DE LA APP --- */
+        /* --- ESCRITORIO --- */
         .desktop {
             flex-grow: 1; padding: 20px;
             display: grid; grid-template-columns: repeat(auto-fill, 90px); gap: 20px;
@@ -119,16 +126,20 @@
 
         .project-icon {
             display: flex; flex-direction: column; align-items: center; text-align: center;
-            cursor: pointer; color: white; text-shadow: 1px 1px 2px black;
-            text-decoration: none; padding: 5px; border: 1px dotted transparent;
-            user-select: none;
+            cursor: pointer; color: var(--text-light); 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            text-decoration: none; padding: 5px; 
+            border: 1px dotted transparent; user-select: none;
+            transition: background 0.2s;
         }
 
         .project-icon.selected {
-            background-color: #000080; border: 1px dotted #fff;
+            background-color: var(--highlight); 
+            border: 1px dotted var(--border-light);
+            color: var(--bg-window-content); /* Contraste en selección */
         }
 
-        .project-icon span { font-size: 12px; line-height: 1.2; word-wrap: break-word; color: white; }
+        .project-icon span { font-size: 12px; line-height: 1.2; word-wrap: break-word; }
 
         .icon-emoji {
             font-size: 40px; line-height: 1; margin-bottom: 5px; 
@@ -137,87 +148,99 @@
 
         .watermark-logo {
             position: absolute; bottom: 60px; right: 30px; text-align: right;
-            pointer-events: none; z-index: 0; opacity: 0.8;
+            pointer-events: none; z-index: 0; opacity: 0.6;
         }
         .watermark-logo h1 {
-            color: #fff; font-size: 2rem; text-shadow: 3px 3px 0px #d48fb3;
-            font-family: 'Arial Black', sans-serif; line-height: 0.9; letter-spacing: -1px;
+            color: var(--text-light); font-size: 2rem; 
+            text-shadow: 3px 3px 0px var(--highlight);
+            font-family: var(--font-title); line-height: 0.9; letter-spacing: -1px;
         }
-        .watermark-logo span { font-size: 0.8rem; display: block; color: #fff; text-shadow: 1px 1px 0px #d48fb3; }
+        .watermark-logo span { font-size: 0.8rem; display: block; color: var(--text-light); }
 
         /* --- BARRA DE TAREAS --- */
         .taskbar {
-            height: 40px; background-color: #f3c1d7;
-            border-top: 2px solid #fff; border-bottom: 2px solid #a36d87;
+            height: 40px; background-color: var(--bg-taskbar);
+            border-top: 2px solid var(--border-light); border-bottom: 2px solid var(--border-dark);
             display: flex; align-items: center; padding: 0 5px;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 100; position: relative;
+            transition: background-color 0.3s;
         }
 
         .start-btn {
-            background-color: #e6e6e6; border: 1px solid #000;
-            border-top-color: #fff; border-left-color: #fff;
-            border-bottom-color: #808080; border-right-color: #808080;
+            background-color: var(--bg-window); 
+            border: 1px solid var(--border-dark);
+            border-top-color: var(--border-light); border-left-color: var(--border-light);
             padding: 5px 10px; font-weight: bold; font-size: 12px;
             display: flex; align-items: center; gap: 5px; cursor: pointer;
-            height: 30px; box-shadow: inset 1px 1px 0px #dfdfdf;
+            height: 30px; color: var(--text-main);
+            box-shadow: inset 1px 1px 0px var(--border-light);
             position: relative; z-index: 101;
+            border-radius: var(--window-radius);
         }
         
         .start-btn:active, .start-btn.open {
-            border-top-color: #808080; border-left-color: #808080;
-            border-bottom-color: #fff; border-right-color: #fff;
-            padding: 6px 9px 4px 11px; background-color: #d4d4d4;
+            border-top-color: var(--border-dark); border-left-color: var(--border-dark);
+            border-bottom-color: var(--border-light); border-right-color: var(--border-light);
+            padding: 6px 9px 4px 11px; 
         }
 
-        .start-btn img { width: 16px; height: 16px; }
-        .divider { width: 2px; height: 20px; background: #a36d87; border-right: 1px solid #fff; margin: 0 10px; }
+        .start-btn img { width: 16px; height: 16px; filter: brightness(0) invert(var(--icon-invert, 0)); }
+        .theme-tui .start-btn img { display: none; } /* Ocultar icono windows en TUI */
+        .theme-distro .start-btn img { filter: none; }
+
+        .divider { width: 2px; height: 20px; background: var(--border-dark); border-right: 1px solid var(--border-light); margin: 0 10px; }
 
         .system-tray {
             margin-left: auto; display: flex; align-items: center; gap: 10px;
-            font-size: 12px; color: #000; padding-right: 5px;
+            font-size: 12px; color: var(--text-main); padding-right: 5px;
         }
 
         /* --- MENÚ DE INICIO --- */
         .start-menu {
             position: absolute; bottom: 40px; left: 5px; width: 250px;
-            background-color: #c0c0c0; border: 2px solid #fff;
-            border-right-color: #808080; border-bottom-color: #808080;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            background-color: var(--bg-window); 
+            border: 2px solid var(--border-light);
+            border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            box-shadow: var(--shadow);
             display: none; flex-direction: column; z-index: 99;
+            border-radius: var(--window-radius);
+            overflow: hidden;
         }
         .start-menu.open { display: flex; }
 
         .start-menu-header {
-            background: linear-gradient(to bottom, #000080, #1084d0); color: white;
+            background: var(--highlight); color: var(--text-light);
             padding: 10px; font-weight: bold; font-size: 18px;
             writing-mode: vertical-lr; transform: rotate(180deg);
             position: absolute; left: 0; top: 0; bottom: 0; width: 30px;
             display: flex; align-items: center; justify-content: center;
-            text-shadow: 1px 1px 0 #000;
         }
 
         .start-menu-list { margin-left: 30px; display: flex; flex-direction: column; padding: 2px; }
 
         .start-item {
             display: flex; align-items: center; gap: 10px; padding: 8px 10px;
-            font-size: 12px; color: #000; text-decoration: none; cursor: pointer;
+            font-size: 12px; color: var(--text-main); text-decoration: none; cursor: pointer;
             border: 1px solid transparent;
         }
-        .start-item:hover { background-color: #000080; color: white; }
+        .start-item:hover { background-color: var(--highlight); color: var(--text-light); }
         .start-item .icon-emoji { font-size: 24px; margin-bottom: 0; filter: none; }
 
-        /* --- VENTANAS FLOTANTES (MODALES) --- */
+        /* --- VENTANAS FLOTANTES --- */
         .window-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 400px; background-color: #c0c0c0;
-            border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            width: 400px; background-color: var(--bg-window);
+            border: 2px solid var(--border-light); 
+            border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            box-shadow: var(--shadow);
             display: none; flex-direction: column; z-index: 1000;
+            border-radius: var(--window-radius);
+            overflow: hidden;
         }
         .window-modal.active { display: flex; }
 
         .window-header {
-            background: linear-gradient(90deg, #000080, #1084d0); color: white;
+            background: var(--highlight); color: var(--text-title);
             padding: 3px 5px; display: flex; justify-content: space-between; align-items: center;
             font-weight: bold; font-size: 12px; cursor: move; user-select: none;
         }
@@ -225,37 +248,37 @@
         .window-controls { display: flex; gap: 2px; }
 
         .win-btn {
-            width: 16px; height: 14px; background-color: #c0c0c0;
-            border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            width: 16px; height: 14px; background-color: var(--bg-window);
+            border: 1px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
             display: flex; justify-content: center; align-items: center;
-            font-size: 10px; font-weight: bold; cursor: pointer; color: black;
+            font-size: 10px; font-weight: bold; cursor: pointer; color: var(--text-main);
         }
-        .win-btn:active { border: 1px solid #808080; border-right-color: #fff; border-bottom-color: #fff; }
+        .win-btn:active { border: 1px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light); }
 
         .window-content {
-            padding: 20px; background-color: #fff; margin: 2px;
-            border: 2px solid #808080; border-right-color: #fff; border-bottom-color: #fff;
+            padding: 20px; background-color: var(--bg-window-content); margin: 2px;
+            border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light);
             display: flex; flex-direction: column; gap: 15px;
         }
 
-        .window-content h2 { font-size: 18px; color: #000080; margin-bottom: 5px; }
-        .window-content p { font-size: 14px; color: #333; line-height: 1.4; }
+        .window-content h2 { font-size: 18px; color: var(--highlight); margin-bottom: 5px; }
+        .window-content p { font-size: 14px; line-height: 1.4; }
 
         .action-btn {
-            background-color: #c0c0c0; border: 2px solid #fff;
-            border-right-color: #808080; border-bottom-color: #808080;
+            background-color: var(--bg-window); border: 2px solid var(--border-light);
+            border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
             padding: 8px 15px; font-weight: bold; font-size: 14px;
-            cursor: pointer; text-align: center; text-decoration: none; color: black;
+            cursor: pointer; text-align: center; text-decoration: none; color: var(--text-main);
             display: inline-block; margin-top: 10px; align-self: flex-start;
         }
-        .action-btn:active { border: 2px solid #808080; border-right-color: #fff; border-bottom-color: #fff; padding: 9px 14px 7px 16px; }
+        .action-btn:active { border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light); padding: 9px 14px 7px 16px; }
 
         /* Estilos Configuración */
         .config-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
-        .config-group label { font-size: 12px; font-weight: bold; color: #000; }
+        .config-group label { font-size: 12px; font-weight: bold; color: var(--text-main); }
         .config-group input[type="text"] {
-            padding: 4px; border: 2px solid #808080; border-right-color: #fff; border-bottom-color: #fff;
-            font-family: 'MS Sans Serif', sans-serif; font-size: 14px;
+            padding: 4px; border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light);
+            font-family: var(--font-main); font-size: 14px; background: var(--bg-window-content); color: var(--text-main);
         }
         
         .config-toggle { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
@@ -265,15 +288,30 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #808080; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            background-color: var(--border-dark); border: 2px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
             transition: .4s;
         }
         .slider:before {
             position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px;
-            background-color: #c0c0c0; border: 1px solid #000; transition: .4s;
+            background-color: var(--bg-window); border: 1px solid var(--text-main); transition: .4s;
         }
-        input:checked + .slider { background-color: #000080; }
+        input:checked + .slider { background-color: var(--highlight); }
         input:checked + .slider:before { transform: translateX(18px); }
+
+        /* Selector de Tema */
+        .theme-selector {
+            display: flex; gap: 5px; margin-top: 5px;
+        }
+        .theme-btn {
+            flex: 1; padding: 8px; border: 2px solid var(--border-dark); 
+            border-right-color: var(--border-light); border-bottom-color: var(--border-light);
+            background: var(--bg-window); cursor: pointer; font-family: var(--font-main);
+            font-size: 11px; color: var(--text-main); text-align: center;
+        }
+        .theme-btn.active {
+            border: 2px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            background: var(--highlight); color: var(--text-light);
+        }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -283,34 +321,29 @@
 
         .toast {
             position: fixed; bottom: 60px; right: 20px;
-            background-color: #ffffe1; border: 1px solid #000; padding: 10px 15px;
-            font-size: 12px; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            background-color: var(--bg-window); border: 1px solid var(--border-dark); padding: 10px 15px;
+            font-size: 12px; box-shadow: var(--shadow);
             z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s;
+            color: var(--text-main);
         }
         .toast.show { display: block; opacity: 1; }
 
-        /* Clase para ocultar el splash */
         .hidden { display: none !important; }
         .fade-out { opacity: 0; pointer-events: none; }
 
     </style>
 </head>
-<body>
+<body class="theme-win98"> <!-- Clase inicial por defecto -->
 
-    <!-- PANTALLA DE INICIO (SPLASH) -->
+    <!-- PANTALLA DE INICIO -->
     <div id="splash-screen">
         <div class="splash-logo">Moustache</div>
         <div class="splash-subtitle">de Chat Lab</div>
-        
-        <div class="loading-bar-container" id="loading-bar">
-            <!-- Los bloques se generan con JS -->
-        </div>
-
+        <div class="loading-bar-container" id="loading-bar"></div>
         <div class="splash-options">
             <input type="checkbox" id="hide-splash-checkbox">
             <label for="hide-splash-checkbox">No mostrar de nuevo al iniciar</label>
         </div>
-
         <button id="skip-splash-btn">Saltar Inicio</button>
     </div>
 
@@ -336,7 +369,7 @@
             Inicio
         </button>
         <div class="divider"></div>
-        <div id="taskbar-status" style="font-size: 11px; color: #555;"></div>
+        <div id="taskbar-status" style="font-size: 11px; color: var(--text-main);"></div>
         <div class="system-tray">
             <span id="user-display" style="font-weight: bold; margin-right: 5px;"></span>
             <span>🔊</span>
@@ -355,9 +388,7 @@
                 <span id="modal-icon">📁</span>
                 <span id="modal-title">Título</span>
             </div>
-            <div class="window-controls">
-                <div class="win-btn" id="close-btn">X</div>
-            </div>
+            <div class="window-controls"><div class="win-btn" id="close-btn">X</div></div>
         </div>
         <div class="window-content">
             <h2 id="modal-heading">Nombre</h2>
@@ -369,17 +400,22 @@
     <!-- VENTANA DE CONFIGURACIÓN -->
     <div class="window-modal" id="config-window" style="width: 350px;">
         <div class="window-header" id="config-header">
-            <div class="window-title">
-                <span>⚙️</span>
-                <span>Configuración</span>
-            </div>
-            <div class="window-controls">
-                <div class="win-btn" id="close-config">X</div>
-            </div>
+            <div class="window-title"><span>⚙️</span><span>Configuración</span></div>
+            <div class="window-controls"><div class="win-btn" id="close-config">X</div></div>
         </div>
         <div class="window-content">
             <h2>Panel de Control</h2>
             
+            <!-- Selector de Tema -->
+            <div class="config-group">
+                <label>Apariencia / Tema:</label>
+                <div class="theme-selector">
+                    <button class="theme-btn active" data-theme="theme-win98">Win 98</button>
+                    <button class="theme-btn" data-theme="theme-tui">TUI</button>
+                    <button class="theme-btn" data-theme="theme-distro">Distro</button>
+                </div>
+            </div>
+
             <div class="config-group">
                 <label for="username-input">Nombre de Usuario:</label>
                 <input type="text" id="username-input" placeholder="Escribe tu nombre...">
@@ -396,8 +432,7 @@
                 </div>
             </div>
 
-            <!-- Opción para reactivar la animación de inicio -->
-            <div class="config-group" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
+            <div class="config-group" style="margin-top: 15px; border-top: 1px solid var(--border-dark); padding-top: 10px;">
                 <label>Pantalla de Inicio:</label>
                 <div class="config-toggle">
                     <label class="switch">
@@ -408,16 +443,15 @@
                 </div>
             </div>
 
-            <div class="config-group" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
-                <button class="action-btn" id="btn-clear-cache" style="align-self: stretch; background-color: #e6e6e6;">🗑️ Actualizar Caché</button>
-                <p style="font-size: 10px; color: #666; margin-top: 5px;">Borra los datos almacenados localmente y recarga la página.</p>
+            <div class="config-group" style="margin-top: 15px; border-top: 1px solid var(--border-dark); padding-top: 10px;">
+                <button class="action-btn" id="btn-clear-cache" style="align-self: stretch;">🗑️ Actualizar Caché</button>
             </div>
 
-            <button class="action-btn" id="btn-save-config" style="background-color: #d4d4d4; align-self: stretch; margin-top: 10px;">💾 Guardar Cambios</button>
+            <button class="action-btn" id="btn-save-config" style="align-self: stretch; margin-top: 10px;">💾 Guardar Cambios</button>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICACIÓN -->
+    <!-- TOAST -->
     <div class="toast" id="toast">Mensaje</div>
 
     <script>
@@ -438,6 +472,7 @@
         ];
 
         // Referencias DOM
+        const body = document.body;
         const splashScreen = document.getElementById('splash-screen');
         const loadingBar = document.getElementById('loading-bar');
         const hideSplashCheckbox = document.getElementById('hide-splash-checkbox');
@@ -469,52 +504,71 @@
         const btnSaveConfig = document.getElementById('btn-save-config');
         const btnClearCache = document.getElementById('btn-clear-cache');
         const toast = document.getElementById('toast');
+        const themeButtons = document.querySelectorAll('.theme-btn');
 
         let selectedIcon = null;
+        let currentTheme = 'theme-win98'; // Tema por defecto
 
-        // --- LÓGICA DE LA PANTALLA DE INICIO ---
-        function initSplash() {
-            // Comprobar si el usuario decidió ocultarlo
-            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
+        // --- LÓGICA DE TEMAS ---
+        function applyTheme(themeName) {
+            // Quitar clases de temas anteriores
+            body.classList.remove('theme-win98', 'theme-tui', 'theme-distro');
+            // Añadir nuevo tema
+            body.classList.add(themeName);
+            currentTheme = themeName;
+
+            // Actualizar UI de botones
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === themeName);
+            });
             
+            // Guardar en localStorage
+            localStorage.setItem('moustache_theme', themeName);
+        }
+
+        // Event listeners para los botones de tema
+        themeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                applyTheme(btn.dataset.theme);
+            });
+        });
+
+        // Cargar tema guardado al iniciar
+        const savedTheme = localStorage.getItem('moustache_theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        }
+
+        // --- LÓGICA DEL SPLASH ---
+        function initSplash() {
+            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
             if (hideSplash) {
                 splashScreen.classList.add('hidden');
-                return; // No ejecutamos la animación
+                return;
             }
 
-            // Crear los bloques de la barra de carga
             for (let i = 0; i < 10; i++) {
                 const block = document.createElement('div');
                 block.className = 'loading-block';
-                // Asignar un retraso de animación escalonado
                 block.style.animation = `loadBlock 1.5s infinite ${i * 0.15}s`;
                 loadingBar.appendChild(block);
             }
 
-            // Tiempo de duración de la animación (4 segundos)
-            const splashTimeout = setTimeout(() => {
-                finishSplash();
-            }, 4000);
+            const splashTimeout = setTimeout(() => { finishSplash(); }, 4000);
 
-            // Función para terminar el splash
             function finishSplash() {
                 clearTimeout(splashTimeout);
                 splashScreen.classList.add('fade-out');
-                setTimeout(() => {
-                    splashScreen.classList.add('hidden');
-                }, 1000); // Esperar a que termine la transición
+                setTimeout(() => { splashScreen.classList.add('hidden'); }, 1000);
             }
 
-            // Botón de saltar
             skipSplashBtn.addEventListener('click', finishSplash);
-
-            // Guardar preferencia si marca la casilla
             hideSplashCheckbox.addEventListener('change', (e) => {
                 localStorage.setItem('moustache_hide_splash', e.target.checked);
             });
         }
 
-        // --- 1. GENERAR ICONOS EN EL ESCRITORIO ---
+        // --- ICONOS DEL ESCRITORIO ---
         function createDesktopIcons() {
             const configDiv = document.createElement('div');
             configDiv.className = 'project-icon';
@@ -533,7 +587,7 @@
             });
         }
 
-        // --- 2. GENERAR EL MENÚ DE INICIO ---
+        // --- MENÚ DE INICIO ---
         projects.forEach(project => {
             const item = document.createElement('div');
             item.className = 'start-item';
@@ -542,7 +596,7 @@
             startMenuList.appendChild(item);
         });
 
-        // --- 3. LÓGICA DE SELECCIÓN ---
+        // --- SELECCIÓN ---
         function selectIcon(iconElement) {
             if (selectedIcon) selectedIcon.classList.remove('selected');
             iconElement.classList.add('selected');
@@ -553,7 +607,7 @@
             if (selectedIcon) { selectedIcon.classList.remove('selected'); selectedIcon = null; }
         });
 
-        // --- 4. LÓGICA DEL MENÚ DE INICIO ---
+        // --- MENÚ DE INICIO FUNCIONALIDAD ---
         function toggleStartMenu() {
             startMenu.classList.toggle('open');
             startBtn.classList.toggle('open');
@@ -568,7 +622,7 @@
             if (!startMenu.contains(e.target) && !startBtn.contains(e.target)) closeStartMenu();
         });
 
-        // --- 5. VENTANA DE PROYECTOS ---
+        // --- VENTANA DE PROYECTOS ---
         function openWindow(project) {
             modalTitle.textContent = project.name + " - Moustache Lab";
             modalHeading.textContent = project.name;
@@ -590,7 +644,7 @@
         }
         closeBtn.addEventListener('click', closeWindow);
 
-        // --- 6. VENTANA DE CONFIGURACIÓN ---
+        // --- VENTANA DE CONFIGURACIÓN ---
         function openConfig() {
             const savedUser = localStorage.getItem('moustache_username') || '';
             const isOnline = localStorage.getItem('moustache_online') !== 'false';
@@ -620,110 +674,13 @@
 
         function updateOnlineUI(isOnline) {
             onlineStatusText.textContent = isOnline ? "Online 🌐" : "Offline 📴";
-            onlineStatusText.style.color = isOnline ? "#000080" : "#800000";
         }
 
         function updateSplashUI(isHidden) {
             splashStatusText.textContent = isHidden ? "Animación Desactivada" : "Animación Activada";
-            splashStatusText.style.color = isHidden ? "#800000" : "#000080";
         }
 
         onlineToggle.addEventListener('change', (e) => updateOnlineUI(e.target.checked));
         splashToggle.addEventListener('change', (e) => updateSplashUI(e.target.checked));
 
         btnSaveConfig.addEventListener('click', () => {
-            const newName = usernameInput.value.trim();
-            const isOnline = onlineToggle.checked;
-            const hideSplash = splashToggle.checked;
-
-            localStorage.setItem('moustache_username', newName);
-            localStorage.setItem('moustache_online', isOnline);
-            localStorage.setItem('moustache_hide_splash', hideSplash);
-
-            userDisplay.textContent = newName ? `👤 ${newName}` : '';
-            
-            showToast("✅ Configuración guardada correctamente.");
-        });
-
-        btnClearCache.addEventListener('click', async () => {
-            if(confirm("¿Estás seguro de que quieres borrar los datos locales y actualizar la caché? Se recargará la página.")) {
-                localStorage.clear();
-                if ('caches' in window) {
-                    try {
-                        const cacheNames = await caches.keys();
-                        await Promise.all(cacheNames.map(name => caches.delete(name)));
-                    } catch (err) { console.log("Error borrando cache:", err); }
-                }
-                showToast("🔄 Caché borrada. Recargando...");
-                setTimeout(() => { location.reload(); }, 1500);
-            }
-        });
-
-        // --- 7. ARRASTRAR VENTANAS ---
-        function makeDraggable(header, windowElement) {
-            let isDragging = false;
-            let offsetX, offsetY;
-
-            header.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                const rect = windowElement.getBoundingClientRect();
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-                
-                windowElement.style.transform = 'none';
-                windowElement.style.left = rect.left + 'px';
-                windowElement.style.top = rect.top + 'px';
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                let newX = e.clientX - offsetX;
-                let newY = e.clientY - offsetY;
-                const maxX = window.innerWidth - windowElement.offsetWidth;
-                const maxY = window.innerHeight - windowElement.offsetHeight - 40;
-                if (newX < 0) newX = 0;
-                if (newY < 0) newY = 0;
-                if (newX > maxX) newX = maxX;
-                if (newY > maxY) newY = maxY;
-                windowElement.style.left = newX + 'px';
-                windowElement.style.top = newY + 'px';
-            });
-
-            document.addEventListener('mouseup', () => { isDragging = false; });
-        }
-
-        makeDraggable(document.getElementById('window-header'), modal);
-        makeDraggable(configHeader, configWindow);
-
-        // --- 8. TOAST ---
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
-
-        // --- 9. RELOJ Y CARGA INICIAL ---
-        function updateClock() {
-            const now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('clock').textContent = hours + ':' + minutes + ' ' + ampm;
-        }
-        
-        // --- INICIALIZACIÓN ---
-        initSplash(); // Llama a la animación primero
-        createDesktopIcons();
-        
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        const savedUserInit = localStorage.getItem('moustache_username');
-        if (savedUserInit) { userDisplay.textContent = `👤 ${savedUserInit}`; }
-
-    </script>
-</body>
-</html>
