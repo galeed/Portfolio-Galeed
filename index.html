@@ -7,7 +7,6 @@
     <style>
         /* --- VARIABLES DE TEMA (Por defecto: Win98) --- */
         :root {
-            /* Colores Base */
             --bg-desktop: #6da2d8;
             --bg-taskbar: #f3c1d7;
             --bg-window: #c0c0c0;
@@ -24,13 +23,12 @@
             --shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* --- TEMA TUI (Terminal) --- */
         body.theme-tui {
             --bg-desktop: #0a0a0a;
             --bg-taskbar: #111111;
             --bg-window: #1a1a1a;
             --bg-window-content: #000000;
-            --text-main: #33ff33; /* Verde fósforo */
+            --text-main: #33ff33;
             --text-light: #33ff33;
             --text-title: #33ff33;
             --border-light: #33ff33;
@@ -42,7 +40,6 @@
             --shadow: 0 0 10px rgba(51, 255, 51, 0.2);
         }
 
-        /* --- TEMA DISTRO (Moderno/Oscuro) --- */
         body.theme-distro {
             --bg-desktop: #121212;
             --bg-taskbar: #1e1e1e;
@@ -53,7 +50,7 @@
             --text-title: #ffffff;
             --border-light: #444444;
             --border-dark: #111111;
-            --highlight: #00bcd4; /* Acento cyan/neón */
+            --highlight: #00bcd4;
             --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             --font-title: 'Segoe UI', sans-serif;
             --window-radius: 8px;
@@ -75,88 +72,44 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* --- PANTALLA DE INICIO (SPLASH) --- */
-        // --- LÓGICA DEL SPLASH ---
-        let splashTimeout = null;
-
-        function finishSplash() {
-            // Limpiar el timeout si existe
-            if (splashTimeout) {
-                clearTimeout(splashTimeout);
-                splashTimeout = null;
-            }
-
-            // Pausar la animación de los bloques
-            document.querySelectorAll('.loading-block').forEach(block => {
-                block.classList.add('paused');
-            });
-
-            // Desvanecer
-            splashScreen.classList.add('fade-out');
-
-            // Ocultar definitivamente después de la transición
-            setTimeout(() => {
-                splashScreen.classList.add('hidden');
-                // Opcional: eliminar el splash del DOM para liberar memoria
-                // splashScreen.remove();
-            }, 800);
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; transition: opacity 0.8s ease-out;
         }
+        #splash-screen.fade-out { opacity: 0; pointer-events: none; }
+        #splash-screen.hidden { display: none !important; }
 
-        // --- LÓGICA DEL SPLASH ---
-        let splashTimeout = null;
-
-        function finishSplash() {
-            // Limpiar el timeout si existe
-            if (splashTimeout) {
-                clearTimeout(splashTimeout);
-                splashTimeout = null;
-            }
-
-            // Pausar la animación de los bloques
-            document.querySelectorAll('.loading-block').forEach(block => {
-                block.classList.add('paused');
-            });
-
-            // Desvanecer
-            splashScreen.classList.add('fade-out');
-
-            // Ocultar definitivamente después de la transición
-            setTimeout(() => {
-                splashScreen.classList.add('hidden');
-                // Opcional: eliminar el splash del DOM para liberar memoria
-                // splashScreen.remove();
-            }, 800);
+        .splash-logo {
+            font-family: var(--font-title); font-size: 3rem;
+            color: #fff; text-shadow: 3px 3px 0px #d48fb3;
+            margin-bottom: 20px; letter-spacing: -2px;
         }
+        .splash-subtitle { font-size: 1.2rem; margin-bottom: 40px; color: #ccc; }
 
-        function initSplash() {
-            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
-            
-            if (hideSplash) {
-                splashScreen.classList.add('hidden');
-                return;
-            }
+        .loading-bar-container {
+            width: 300px; height: 20px; border: 2px solid #fff;
+            padding: 2px; background-color: #000;
+            display: flex; gap: 2px;
+        }
+        .loading-block {
+            width: 20px; height: 100%; background-color: #000080; opacity: 0;
+            animation: loadBlock 1.5s infinite;
+        }
+        .loading-block.paused { animation: none !important; opacity: 1; }
+        @keyframes loadBlock { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
-            // Crear los bloques de carga
-            for (let i = 0; i < 10; i++) {
-                const block = document.createElement('div');
-                block.className = 'loading-block';
-                // Asignar un retraso de animación escalonado
-                block.style.animationDelay = `${i * 0.15}s`;
-                loadingBar.appendChild(block);
-            }
-
-            // Tiempo de duración de la animación (4 segundos)
-            splashTimeout = setTimeout(() => {
-                finishSplash();
-            }, 4000);
-
-            // Botón de saltar
-            skipSplashBtn.addEventListener('click', finishSplash);
-
-            // Guardar preferencia si marca la casilla
-            hideSplashCheckbox.addEventListener('change', (e) => {
-                localStorage.setItem('moustache_hide_splash', e.target.checked);
-            });
+        .splash-options {
+            margin-top: 30px; display: flex; align-items: center; gap: 10px;
+            font-size: 14px; color: #ccc;
+        }
+        #skip-splash-btn {
+            margin-top: 20px; background-color: #c0c0c0;
+            border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            padding: 8px 20px; font-weight: bold; cursor: pointer; font-size: 14px;
+            font-family: sans-serif;
         }
 
         /* --- ESCRITORIO --- */
@@ -174,19 +127,13 @@
             border: 1px dotted transparent; user-select: none;
             transition: background 0.2s;
         }
-
         .project-icon.selected {
             background-color: var(--highlight); 
             border: 1px dotted var(--border-light);
-            color: var(--bg-window-content); /* Contraste en selección */
+            color: var(--bg-window-content);
         }
-
         .project-icon span { font-size: 12px; line-height: 1.2; word-wrap: break-word; }
-
-        .icon-emoji {
-            font-size: 40px; line-height: 1; margin-bottom: 5px; 
-            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
-        }
+        .icon-emoji { font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); }
 
         .watermark-logo {
             position: absolute; bottom: 60px; right: 30px; text-align: right;
@@ -219,23 +166,16 @@
             position: relative; z-index: 101;
             border-radius: var(--window-radius);
         }
-        
         .start-btn:active, .start-btn.open {
             border-top-color: var(--border-dark); border-left-color: var(--border-dark);
             border-bottom-color: var(--border-light); border-right-color: var(--border-light);
             padding: 6px 9px 4px 11px; 
         }
-
         .start-btn img { width: 16px; height: 16px; filter: brightness(0) invert(var(--icon-invert, 0)); }
-        .theme-tui .start-btn img { display: none; } /* Ocultar icono windows en TUI */
-        .theme-distro .start-btn img { filter: none; }
+        .theme-tui .start-btn img { display: none; }
 
         .divider { width: 2px; height: 20px; background: var(--border-dark); border-right: 1px solid var(--border-light); margin: 0 10px; }
-
-        .system-tray {
-            margin-left: auto; display: flex; align-items: center; gap: 10px;
-            font-size: 12px; color: var(--text-main); padding-right: 5px;
-        }
+        .system-tray { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-main); padding-right: 5px; }
 
         /* --- MENÚ DE INICIO --- */
         .start-menu {
@@ -249,7 +189,6 @@
             overflow: hidden;
         }
         .start-menu.open { display: flex; }
-
         .start-menu-header {
             background: var(--highlight); color: var(--text-light);
             padding: 10px; font-weight: bold; font-size: 18px;
@@ -257,9 +196,7 @@
             position: absolute; left: 0; top: 0; bottom: 0; width: 30px;
             display: flex; align-items: center; justify-content: center;
         }
-
         .start-menu-list { margin-left: 30px; display: flex; flex-direction: column; padding: 2px; }
-
         .start-item {
             display: flex; align-items: center; gap: 10px; padding: 8px 10px;
             font-size: 12px; color: var(--text-main); text-decoration: none; cursor: pointer;
@@ -302,7 +239,6 @@
             border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light);
             display: flex; flex-direction: column; gap: 15px;
         }
-
         .window-content h2 { font-size: 18px; color: var(--highlight); margin-bottom: 5px; }
         .window-content p { font-size: 14px; line-height: 1.4; }
 
@@ -315,7 +251,7 @@
         }
         .action-btn:active { border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light); padding: 9px 14px 7px 16px; }
 
-        /* Estilos Configuración */
+        /* Configuración */
         .config-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
         .config-group label { font-size: 12px; font-weight: bold; color: var(--text-main); }
         .config-group input[type="text"] {
@@ -340,10 +276,7 @@
         input:checked + .slider { background-color: var(--highlight); }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        /* Selector de Tema */
-        .theme-selector {
-            display: flex; gap: 5px; margin-top: 5px;
-        }
+        .theme-selector { display: flex; gap: 5px; margin-top: 5px; }
         .theme-btn {
             flex: 1; padding: 8px; border: 2px solid var(--border-dark); 
             border-right-color: var(--border-light); border-bottom-color: var(--border-light);
@@ -355,17 +288,45 @@
             background: var(--highlight); color: var(--text-light);
         }
 
+        /* Modal de Reinicio (pequeño) */
+        #restart-modal {
+            width: 320px;
+            z-index: 2000; /* Por encima de todo */
+        }
+        #restart-modal .window-content {
+            padding: 15px;
+            gap: 10px;
+        }
+        #restart-modal .action-btn {
+            margin-top: 5px;
+            align-self: stretch;
+            text-align: center;
+        }
+        #restart-modal .buttons-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        #restart-modal .buttons-row .action-btn {
+            flex: 1;
+        }
+
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.3); display: none; z-index: 999;
         }
         .overlay.active { display: block; }
+        /* Overlay más oscuro para el modal de reinicio */
+        #overlay-restart {
+            background: rgba(0,0,0,0.5);
+            z-index: 1999;
+        }
 
         .toast {
             position: fixed; bottom: 60px; right: 20px;
             background-color: var(--bg-window); border: 1px solid var(--border-dark); padding: 10px 15px;
             font-size: 12px; box-shadow: var(--shadow);
-            z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s;
+            z-index: 2001; display: none; opacity: 0; transition: opacity 0.3s;
             color: var(--text-main);
         }
         .toast.show { display: block; opacity: 1; }
@@ -375,7 +336,7 @@
 
     </style>
 </head>
-<body class="theme-win98"> <!-- Clase inicial por defecto -->
+<body class="theme-win98">
 
     <!-- PANTALLA DE INICIO -->
     <div id="splash-screen">
@@ -420,8 +381,10 @@
         </div>
     </footer>
 
-    <!-- OVERLAY -->
+    <!-- OVERLAY GENERAL -->
     <div class="overlay" id="overlay"></div>
+    <!-- OVERLAY PARA REINICIO -->
+    <div class="overlay" id="overlay-restart"></div>
 
     <!-- VENTANA MODAL (Proyectos) -->
     <div class="window-modal" id="project-window">
@@ -448,14 +411,15 @@
         <div class="window-content">
             <h2>Panel de Control</h2>
             
-            <!-- Selector de Tema -->
+            <!-- Selector de Tema (Solo guarda selección, no aplica) -->
             <div class="config-group">
                 <label>Apariencia / Tema:</label>
-                <div class="theme-selector">
+                <div class="theme-selector" id="theme-selector">
                     <button class="theme-btn active" data-theme="theme-win98">Win 98</button>
                     <button class="theme-btn" data-theme="theme-tui">TUI</button>
                     <button class="theme-btn" data-theme="theme-distro">Distro</button>
                 </div>
+                <p style="font-size: 10px; color: var(--border-dark); margin-top: 5px;">Requiere reinicio para aplicar.</p>
             </div>
 
             <div class="config-group">
@@ -490,6 +454,22 @@
             </div>
 
             <button class="action-btn" id="btn-save-config" style="align-self: stretch; margin-top: 10px;">💾 Guardar Cambios</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE REINICIO -->
+    <div class="window-modal" id="restart-modal">
+        <div class="window-header">
+            <div class="window-title"><span>⚠️</span><span>Cambio de Apariencia</span></div>
+            <!-- No tiene botón de cerrar, se cierra con los botones de acción -->
+        </div>
+        <div class="window-content">
+            <p style="font-weight: bold; margin-bottom: 5px;">¿Reiniciar ahora?</p>
+            <p style="font-size: 13px;">Para aplicar los cambios de tema, es necesario reiniciar el sistema. ¿Deseas reiniciar ahora?</p>
+            <div class="buttons-row">
+                <button class="action-btn" id="btn-restart-yes" style="background-color: var(--highlight); color: var(--text-light); border-color: var(--border-light);">Sí, reiniciar</button>
+                <button class="action-btn" id="btn-restart-no">No, cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -548,8 +528,15 @@
         const toast = document.getElementById('toast');
         const themeButtons = document.querySelectorAll('.theme-btn');
 
+        // Modal de reinicio
+        const restartModal = document.getElementById('restart-modal');
+        const overlayRestart = document.getElementById('overlay-restart');
+        const btnRestartYes = document.getElementById('btn-restart-yes');
+        const btnRestartNo = document.getElementById('btn-restart-no');
+
         let selectedIcon = null;
-        let currentTheme = 'theme-win98'; // Tema por defecto
+        let currentTheme = 'theme-win98'; // Tema actual aplicado
+        let pendingTheme = null; // Tema seleccionado pendiente de reinicio
 
         // --- LÓGICA DE TEMAS ---
         function applyTheme(themeName) {
@@ -568,22 +555,96 @@
             localStorage.setItem('moustache_theme', themeName);
         }
 
-        // Event listeners para los botones de tema
-        themeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                applyTheme(btn.dataset.theme);
-            });
-        });
-
         // Cargar tema guardado al iniciar
         const savedTheme = localStorage.getItem('moustache_theme');
         if (savedTheme) {
             applyTheme(savedTheme);
+        } else {
+            // Si no hay tema guardado, aplicar el por defecto (win98)
+            applyTheme('theme-win98');
         }
 
+        // Event listeners para los botones de tema (Solo selección, no aplica)
+        themeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedTheme = btn.dataset.theme;
+                
+                // Si ya está activo, no hacer nada
+                if (selectedTheme === currentTheme) return;
+
+                // Marcar visualmente el botón seleccionado (pero no aplicar aún)
+                themeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                pendingTheme = selectedTheme;
+
+                // Mostrar el modal de reinicio
+                openRestartModal();
+            });
+        });
+
+        // Funciones del modal de reinicio
+        function openRestartModal() {
+            restartModal.classList.add('active');
+            overlayRestart.classList.add('active');
+            // Centrar el modal
+            restartModal.style.top = '50%';
+            restartModal.style.left = '50%';
+            restartModal.style.transform = 'translate(-50%, -50%)';
+        }
+
+        function closeRestartModal() {
+            restartModal.classList.remove('active');
+            overlayRestart.classList.remove('active');
+            
+            // Si se cancela, revertir la selección visual al tema actual
+            if (pendingTheme) {
+                themeButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+                });
+                pendingTheme = null;
+            }
+        }
+
+        // Botón Sí del modal de reinicio
+        btnRestartYes.addEventListener('click', () => {
+            if (pendingTheme) {
+                // Guardar el nuevo tema en localStorage
+                localStorage.setItem('moustache_theme', pendingTheme);
+                // Recargar la página para aplicar cambios
+                location.reload();
+            }
+        });
+
+        // Botón No del modal de reinicio
+        btnRestartNo.addEventListener('click', closeRestartModal);
+
+        // Cerrar modal al hacer clic en el overlay
+        overlayRestart.addEventListener('click', closeRestartModal);
+
         // --- LÓGICA DEL SPLASH ---
+        let splashTimeout = null;
+
+        function finishSplash() {
+            if (splashTimeout) {
+                clearTimeout(splashTimeout);
+                splashTimeout = null;
+            }
+
+            document.querySelectorAll('.loading-block').forEach(block => {
+                block.classList.add('paused');
+            });
+
+            splashScreen.classList.add('fade-out');
+
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+            }, 800);
+        }
+
         function initSplash() {
             const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
+            
             if (hideSplash) {
                 splashScreen.classList.add('hidden');
                 return;
@@ -592,19 +653,16 @@
             for (let i = 0; i < 10; i++) {
                 const block = document.createElement('div');
                 block.className = 'loading-block';
-                block.style.animation = `loadBlock 1.5s infinite ${i * 0.15}s`;
+                block.style.animationDelay = `${i * 0.15}s`;
                 loadingBar.appendChild(block);
             }
 
-            const splashTimeout = setTimeout(() => { finishSplash(); }, 4000);
-
-            function finishSplash() {
-                clearTimeout(splashTimeout);
-                splashScreen.classList.add('fade-out');
-                setTimeout(() => { splashScreen.classList.add('hidden'); }, 1000);
-            }
+            splashTimeout = setTimeout(() => {
+                finishSplash();
+            }, 4000);
 
             skipSplashBtn.addEventListener('click', finishSplash);
+
             hideSplashCheckbox.addEventListener('change', (e) => {
                 localStorage.setItem('moustache_hide_splash', e.target.checked);
             });
@@ -699,6 +757,11 @@
             splashToggle.checked = hideSplash;
             updateSplashUI(hideSplash);
 
+            // Sincronizar botones de tema con el tema actual
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+            });
+
             configWindow.classList.add('active');
             overlay.classList.add('active');
             taskbarStatus.textContent = "Configuración abierta";
@@ -726,3 +789,99 @@
         splashToggle.addEventListener('change', (e) => updateSplashUI(e.target.checked));
 
         btnSaveConfig.addEventListener('click', () => {
+            const newName = usernameInput.value.trim();
+            const isOnline = onlineToggle.checked;
+            const hideSplash = splashToggle.checked;
+
+            localStorage.setItem('moustache_username', newName);
+            localStorage.setItem('moustache_online', isOnline);
+            localStorage.setItem('moustache_hide_splash', hideSplash);
+
+            userDisplay.textContent = newName ? `👤 ${newName}` : '';
+            
+            showToast("✅ Configuración guardada correctamente.");
+        });
+
+        btnClearCache.addEventListener('click', async () => {
+            if(confirm("¿Estás seguro de que quieres borrar los datos locales y actualizar la caché? Se recargará la página.")) {
+                localStorage.clear();
+                if ('caches' in window) {
+                    try {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    } catch (err) { console.log("Error borrando cache:", err); }
+                }
+                showToast("🔄 Caché borrada. Recargando...");
+                setTimeout(() => { location.reload(); }, 1500);
+            }
+        });
+
+        // --- ARRASTRAR VENTANAS ---
+        function makeDraggable(header, windowElement) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            header.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                const rect = windowElement.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                
+                windowElement.style.transform = 'none';
+                windowElement.style.left = rect.left + 'px';
+                windowElement.style.top = rect.top + 'px';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                let newX = e.clientX - offsetX;
+                let newY = e.clientY - offsetY;
+                const maxX = window.innerWidth - windowElement.offsetWidth;
+                const maxY = window.innerHeight - windowElement.offsetHeight - 40;
+                if (newX < 0) newX = 0;
+                if (newY < 0) newY = 0;
+                if (newX > maxX) newX = maxX;
+                if (newY > maxY) newY = maxY;
+                windowElement.style.left = newX + 'px';
+                windowElement.style.top = newY + 'px';
+            });
+
+            document.addEventListener('mouseup', () => { isDragging = false; });
+        }
+
+        makeDraggable(document.getElementById('window-header'), modal);
+        makeDraggable(configHeader, configWindow);
+        // El modal de reinicio no se puede arrastrar, es fijo.
+
+        // --- TOAST ---
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // --- RELOJ ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('clock').textContent = hours + ':' + minutes + ' ' + ampm;
+        }
+        
+        // --- INICIALIZACIÓN ---
+        initSplash();
+        createDesktopIcons();
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const savedUserInit = localStorage.getItem('moustache_username');
+        if (savedUserInit) { userDisplay.textContent = `👤 ${savedUserInit}`; }
+
+    </script>
+</body>
+</html>
