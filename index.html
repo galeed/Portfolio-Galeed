@@ -18,19 +18,105 @@
             justify-content: space-between;
         }
 
-        /* --- ESCRITORIO --- */
-        .desktop {
-            flex-grow: 1;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, 90px);
-            gap: 20px;
-            align-content: start;
-            position: relative;
-            z-index: 1;
+        /* --- PANTALLA DE INICIO (SPLASH SCREEN) --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; /* Fondo negro clásico de arranque */
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: opacity 1s ease-out;
         }
 
-        /* --- ICONOS DE PROYECTOS --- */
+        .splash-logo {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 3px 3px 0px #d48fb3; /* Sombra rosa para combinar */
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .splash-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: #ccc;
+        }
+
+        /* Barra de carga estilo Windows 98 */
+        .loading-bar-container {
+            width: 300px;
+            height: 20px;
+            border: 2px solid #fff;
+            padding: 2px;
+            background-color: #000;
+            display: flex;
+            gap: 2px;
+        }
+
+        .loading-block {
+            width: 20px;
+            height: 100%;
+            background-color: #000080; /* Azul de Windows */
+            opacity: 0;
+        }
+
+        /* Animación de los bloques de carga */
+        @keyframes loadBlock {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .splash-options {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .splash-options input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .splash-options label {
+            cursor: pointer;
+        }
+
+        #skip-splash-btn {
+            margin-top: 20px;
+            background-color: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            padding: 8px 20px;
+            font-weight: bold;
+            font-family: 'MS Sans Serif', sans-serif;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #skip-splash-btn:active {
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        /* --- RESTO DE LA APP --- */
+        .desktop {
+            flex-grow: 1; padding: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, 90px); gap: 20px;
+            align-content: start; position: relative; z-index: 1;
+        }
+
         .project-icon {
             display: flex; flex-direction: column; align-items: center; text-align: center;
             cursor: pointer; color: white; text-shadow: 1px 1px 2px black;
@@ -42,16 +128,13 @@
             background-color: #000080; border: 1px dotted #fff;
         }
 
-        .project-icon span {
-            font-size: 12px; line-height: 1.2; word-wrap: break-word; color: white; 
-        }
+        .project-icon span { font-size: 12px; line-height: 1.2; word-wrap: break-word; color: white; }
 
         .icon-emoji {
             font-size: 40px; line-height: 1; margin-bottom: 5px; 
             filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
         }
 
-        /* --- LOGO FLOTANTE --- */
         .watermark-logo {
             position: absolute; bottom: 60px; right: 30px; text-align: right;
             pointer-events: none; z-index: 0; opacity: 0.8;
@@ -60,9 +143,7 @@
             color: #fff; font-size: 2rem; text-shadow: 3px 3px 0px #d48fb3;
             font-family: 'Arial Black', sans-serif; line-height: 0.9; letter-spacing: -1px;
         }
-        .watermark-logo span {
-            font-size: 0.8rem; display: block; color: #fff; text-shadow: 1px 1px 0px #d48fb3;
-        }
+        .watermark-logo span { font-size: 0.8rem; display: block; color: #fff; text-shadow: 1px 1px 0px #d48fb3; }
 
         /* --- BARRA DE TAREAS --- */
         .taskbar {
@@ -169,7 +250,7 @@
         }
         .action-btn:active { border: 2px solid #808080; border-right-color: #fff; border-bottom-color: #fff; padding: 9px 14px 7px 16px; }
 
-        /* Estilos específicos para el panel de configuración */
+        /* Estilos Configuración */
         .config-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
         .config-group label { font-size: 12px; font-weight: bold; color: #000; }
         .config-group input[type="text"] {
@@ -180,10 +261,7 @@
         .config-toggle { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
         .config-toggle span { font-size: 12px; }
         
-        /* Interruptor estilo 98 */
-        .switch {
-            position: relative; display: inline-block; width: 40px; height: 20px;
-        }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
@@ -203,7 +281,6 @@
         }
         .overlay.active { display: block; }
 
-        /* Notificación tipo toast */
         .toast {
             position: fixed; bottom: 60px; right: 20px;
             background-color: #ffffe1; border: 1px solid #000; padding: 10px 15px;
@@ -212,14 +289,33 @@
         }
         .toast.show { display: block; opacity: 1; }
 
+        /* Clase para ocultar el splash */
+        .hidden { display: none !important; }
+        .fade-out { opacity: 0; pointer-events: none; }
+
     </style>
 </head>
 <body>
 
+    <!-- PANTALLA DE INICIO (SPLASH) -->
+    <div id="splash-screen">
+        <div class="splash-logo">Moustache</div>
+        <div class="splash-subtitle">de Chat Lab</div>
+        
+        <div class="loading-bar-container" id="loading-bar">
+            <!-- Los bloques se generan con JS -->
+        </div>
+
+        <div class="splash-options">
+            <input type="checkbox" id="hide-splash-checkbox">
+            <label for="hide-splash-checkbox">No mostrar de nuevo al iniciar</label>
+        </div>
+
+        <button id="skip-splash-btn">Saltar Inicio</button>
+    </div>
+
     <!-- ZONA DE ESCRITORIO -->
-    <main class="desktop" id="desktop">
-        <!-- El icono de configuración se añade desde JS para que sea fijo -->
-    </main>
+    <main class="desktop" id="desktop"></main>
 
     <!-- LOGO FLOTANTE -->
     <div class="watermark-logo">
@@ -300,6 +396,18 @@
                 </div>
             </div>
 
+            <!-- Opción para reactivar la animación de inicio -->
+            <div class="config-group" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
+                <label>Pantalla de Inicio:</label>
+                <div class="config-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="splash-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="splash-status-text">Ocultar Animación</span>
+                </div>
+            </div>
+
             <div class="config-group" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
                 <button class="action-btn" id="btn-clear-cache" style="align-self: stretch; background-color: #e6e6e6;">🗑️ Actualizar Caché</button>
                 <p style="font-size: 10px; color: #666; margin-top: 5px;">Borra los datos almacenados localmente y recarga la página.</p>
@@ -330,6 +438,11 @@
         ];
 
         // Referencias DOM
+        const splashScreen = document.getElementById('splash-screen');
+        const loadingBar = document.getElementById('loading-bar');
+        const hideSplashCheckbox = document.getElementById('hide-splash-checkbox');
+        const skipSplashBtn = document.getElementById('skip-splash-btn');
+        
         const desktop = document.getElementById('desktop');
         const startMenuList = document.getElementById('start-menu-list');
         const startBtn = document.getElementById('start-btn');
@@ -344,13 +457,14 @@
         const modalIcon = document.getElementById('modal-icon');
         const taskbarStatus = document.getElementById('taskbar-status');
         
-        // Configuración
         const configWindow = document.getElementById('config-window');
         const closeConfig = document.getElementById('close-config');
         const configHeader = document.getElementById('config-header');
         const usernameInput = document.getElementById('username-input');
         const onlineToggle = document.getElementById('online-toggle');
         const onlineStatusText = document.getElementById('online-status-text');
+        const splashToggle = document.getElementById('splash-toggle');
+        const splashStatusText = document.getElementById('splash-status-text');
         const userDisplay = document.getElementById('user-display');
         const btnSaveConfig = document.getElementById('btn-save-config');
         const btnClearCache = document.getElementById('btn-clear-cache');
@@ -358,9 +472,50 @@
 
         let selectedIcon = null;
 
+        // --- LÓGICA DE LA PANTALLA DE INICIO ---
+        function initSplash() {
+            // Comprobar si el usuario decidió ocultarlo
+            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
+            
+            if (hideSplash) {
+                splashScreen.classList.add('hidden');
+                return; // No ejecutamos la animación
+            }
+
+            // Crear los bloques de la barra de carga
+            for (let i = 0; i < 10; i++) {
+                const block = document.createElement('div');
+                block.className = 'loading-block';
+                // Asignar un retraso de animación escalonado
+                block.style.animation = `loadBlock 1.5s infinite ${i * 0.15}s`;
+                loadingBar.appendChild(block);
+            }
+
+            // Tiempo de duración de la animación (4 segundos)
+            const splashTimeout = setTimeout(() => {
+                finishSplash();
+            }, 4000);
+
+            // Función para terminar el splash
+            function finishSplash() {
+                clearTimeout(splashTimeout);
+                splashScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    splashScreen.classList.add('hidden');
+                }, 1000); // Esperar a que termine la transición
+            }
+
+            // Botón de saltar
+            skipSplashBtn.addEventListener('click', finishSplash);
+
+            // Guardar preferencia si marca la casilla
+            hideSplashCheckbox.addEventListener('change', (e) => {
+                localStorage.setItem('moustache_hide_splash', e.target.checked);
+            });
+        }
+
         // --- 1. GENERAR ICONOS EN EL ESCRITORIO ---
         function createDesktopIcons() {
-            // Añadir icono de configuración primero
             const configDiv = document.createElement('div');
             configDiv.className = 'project-icon';
             configDiv.innerHTML = `<div class="icon-emoji">⚙️</div><span>Configuración</span>`;
@@ -368,7 +523,6 @@
             configDiv.addEventListener('dblclick', () => openConfig());
             desktop.appendChild(configDiv);
 
-            // Añadir proyectos
             projects.forEach(project => {
                 const div = document.createElement('div');
                 div.className = 'project-icon';
@@ -378,7 +532,6 @@
                 desktop.appendChild(div);
             });
         }
-        createDesktopIcons();
 
         // --- 2. GENERAR EL MENÚ DE INICIO ---
         projects.forEach(project => {
@@ -389,7 +542,7 @@
             startMenuList.appendChild(item);
         });
 
-        // --- 3. LÓGICA DE SELECCIÓN Y ESCRITORIO ---
+        // --- 3. LÓGICA DE SELECCIÓN ---
         function selectIcon(iconElement) {
             if (selectedIcon) selectedIcon.classList.remove('selected');
             iconElement.classList.add('selected');
@@ -415,7 +568,7 @@
             if (!startMenu.contains(e.target) && !startBtn.contains(e.target)) closeStartMenu();
         });
 
-        // --- 5. LÓGICA DE LA VENTANA DE PROYECTOS ---
+        // --- 5. VENTANA DE PROYECTOS ---
         function openWindow(project) {
             modalTitle.textContent = project.name + " - Moustache Lab";
             modalHeading.textContent = project.name;
@@ -437,15 +590,18 @@
         }
         closeBtn.addEventListener('click', closeWindow);
 
-        // --- 6. LÓGICA DE LA VENTANA DE CONFIGURACIÓN ---
+        // --- 6. VENTANA DE CONFIGURACIÓN ---
         function openConfig() {
-            // Cargar datos guardados
             const savedUser = localStorage.getItem('moustache_username') || '';
-            const isOnline = localStorage.getItem('moustache_online') !== 'false'; // Por defecto true
+            const isOnline = localStorage.getItem('moustache_online') !== 'false';
+            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
             
             usernameInput.value = savedUser;
             onlineToggle.checked = isOnline;
             updateOnlineUI(isOnline);
+            
+            splashToggle.checked = hideSplash;
+            updateSplashUI(hideSplash);
 
             configWindow.classList.add('active');
             overlay.classList.add('active');
@@ -462,53 +618,48 @@
         closeConfig.addEventListener('click', closeConfigWindow);
         overlay.addEventListener('click', () => { closeWindow(); closeConfigWindow(); });
 
-        // Actualizar texto del toggle
         function updateOnlineUI(isOnline) {
             onlineStatusText.textContent = isOnline ? "Online 🌐" : "Offline 📴";
             onlineStatusText.style.color = isOnline ? "#000080" : "#800000";
         }
 
-        onlineToggle.addEventListener('change', (e) => {
-            updateOnlineUI(e.target.checked);
-        });
+        function updateSplashUI(isHidden) {
+            splashStatusText.textContent = isHidden ? "Animación Desactivada" : "Animación Activada";
+            splashStatusText.style.color = isHidden ? "#800000" : "#000080";
+        }
 
-        // Guardar Configuración
+        onlineToggle.addEventListener('change', (e) => updateOnlineUI(e.target.checked));
+        splashToggle.addEventListener('change', (e) => updateSplashUI(e.target.checked));
+
         btnSaveConfig.addEventListener('click', () => {
             const newName = usernameInput.value.trim();
             const isOnline = onlineToggle.checked;
+            const hideSplash = splashToggle.checked;
 
             localStorage.setItem('moustache_username', newName);
             localStorage.setItem('moustache_online', isOnline);
+            localStorage.setItem('moustache_hide_splash', hideSplash);
 
-            // Actualizar UI
             userDisplay.textContent = newName ? `👤 ${newName}` : '';
             
             showToast("✅ Configuración guardada correctamente.");
         });
 
-        // Actualizar Caché / Borrar datos
         btnClearCache.addEventListener('click', async () => {
             if(confirm("¿Estás seguro de que quieres borrar los datos locales y actualizar la caché? Se recargará la página.")) {
                 localStorage.clear();
-                
-                // Intentar borrar la caché de la PWA si existe
                 if ('caches' in window) {
                     try {
                         const cacheNames = await caches.keys();
                         await Promise.all(cacheNames.map(name => caches.delete(name)));
-                    } catch (err) {
-                        console.log("Error borrando cache:", err);
-                    }
+                    } catch (err) { console.log("Error borrando cache:", err); }
                 }
-                
                 showToast("🔄 Caché borrada. Recargando...");
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                setTimeout(() => { location.reload(); }, 1500);
             }
         });
 
-        // --- 7. ARRASTRAR VENTANAS (Función genérica) ---
+        // --- 7. ARRASTRAR VENTANAS ---
         function makeDraggable(header, windowElement) {
             let isDragging = false;
             let offsetX, offsetY;
@@ -526,18 +677,14 @@
 
             document.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
-                
                 let newX = e.clientX - offsetX;
                 let newY = e.clientY - offsetY;
-                
                 const maxX = window.innerWidth - windowElement.offsetWidth;
                 const maxY = window.innerHeight - windowElement.offsetHeight - 40;
-                
                 if (newX < 0) newX = 0;
                 if (newY < 0) newY = 0;
                 if (newX > maxX) newX = maxX;
                 if (newY > maxY) newY = maxY;
-
                 windowElement.style.left = newX + 'px';
                 windowElement.style.top = newY + 'px';
             });
@@ -548,13 +695,11 @@
         makeDraggable(document.getElementById('window-header'), modal);
         makeDraggable(configHeader, configWindow);
 
-        // --- 8. TOAST NOTIFICACIONES ---
+        // --- 8. TOAST ---
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
         // --- 9. RELOJ Y CARGA INICIAL ---
@@ -568,14 +713,16 @@
             minutes = minutes < 10 ? '0' + minutes : minutes;
             document.getElementById('clock').textContent = hours + ':' + minutes + ' ' + ampm;
         }
+        
+        // --- INICIALIZACIÓN ---
+        initSplash(); // Llama a la animación primero
+        createDesktopIcons();
+        
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Cargar nombre de usuario al iniciar
         const savedUserInit = localStorage.getItem('moustache_username');
-        if (savedUserInit) {
-            userDisplay.textContent = `👤 ${savedUserInit}`;
-        }
+        if (savedUserInit) { userDisplay.textContent = `👤 ${savedUserInit}`; }
 
     </script>
 </body>
