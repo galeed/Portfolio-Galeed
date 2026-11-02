@@ -3,76 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moustache de Chat Lab - Themes</title>
+    <title>Moustache de Chat Lab - Win98 Style</title>
     <style>
-        /* --- VARIABLES DE TEMA (Por defecto: Win98) --- */
+        /* --- VARIABLES DE TEMA --- */
         :root {
-            --bg-desktop: #6da2d8;
-            --bg-taskbar: #f3c1d7;
-            --bg-window: #c0c0c0;
-            --bg-window-content: #ffffff;
-            --text-main: #000000;
-            --text-light: #ffffff;
-            --text-title: #ffffff;
-            --border-light: #ffffff;
-            --border-dark: #808080;
-            --highlight: #000080;
-            --font-main: 'MS Sans Serif', 'Pixelated', sans-serif;
-            --font-title: 'Arial Black', sans-serif;
-            --window-radius: 0px;
+            --bg-desktop: #6da2d8; --bg-taskbar: #f3c1d7; --bg-window: #c0c0c0;
+            --bg-window-content: #ffffff; --text-main: #000000; --text-light: #ffffff;
+            --text-title: #ffffff; --border-light: #ffffff; --border-dark: #808080;
+            --highlight: #000080; --font-main: 'MS Sans Serif', 'Pixelated', sans-serif;
+            --font-title: 'Arial Black', sans-serif; --window-radius: 0px;
             --shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
         body.theme-tui {
-            --bg-desktop: #0a0a0a;
-            --bg-taskbar: #111111;
-            --bg-window: #1a1a1a;
-            --bg-window-content: #000000;
-            --text-main: #33ff33;
-            --text-light: #33ff33;
-            --text-title: #33ff33;
-            --border-light: #33ff33;
-            --border-dark: #004400;
-            --highlight: #33ff33;
-            --font-main: 'Courier New', Courier, monospace;
-            --font-title: 'Courier New', Courier, monospace;
-            --window-radius: 4px;
+            --bg-desktop: #0a0a0a; --bg-taskbar: #111111; --bg-window: #1a1a1a;
+            --bg-window-content: #000000; --text-main: #33ff33; --text-light: #33ff33;
+            --text-title: #33ff33; --border-light: #33ff33; --border-dark: #004400;
+            --highlight: #33ff33; --font-main: 'Courier New', Courier, monospace;
+            --font-title: 'Courier New', Courier, monospace; --window-radius: 4px;
             --shadow: 0 0 10px rgba(51, 255, 51, 0.2);
         }
 
         body.theme-distro {
-            --bg-desktop: #121212;
-            --bg-taskbar: #1e1e1e;
-            --bg-window: #2d2d2d;
-            --bg-window-content: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-light: #ffffff;
-            --text-title: #ffffff;
-            --border-light: #444444;
-            --border-dark: #111111;
-            --highlight: #00bcd4;
-            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            --font-title: 'Segoe UI', sans-serif;
-            --window-radius: 8px;
+            --bg-desktop: #121212; --bg-taskbar: #1e1e1e; --bg-window: #2d2d2d;
+            --bg-window-content: #1e1e1e; --text-main: #e0e0e0; --text-light: #ffffff;
+            --text-title: #ffffff; --border-light: #444444; --border-dark: #111111;
+            --highlight: #00bcd4; --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-title: 'Segoe UI', sans-serif; --window-radius: 8px;
             --shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
 
-        /* --- CONFIGURACIÓN GENERAL --- */
+        /* --- GENERAL --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body {
-            background-color: var(--bg-desktop);
-            font-family: var(--font-main);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background-color: var(--bg-desktop); font-family: var(--font-main);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #000; z-index: 9999;
@@ -81,69 +51,41 @@
         }
         #splash-screen.fade-out { opacity: 0; pointer-events: none; }
         #splash-screen.hidden { display: none !important; }
-
-        .splash-logo {
-            font-family: var(--font-title); font-size: 3rem;
-            color: #fff; text-shadow: 3px 3px 0px #d48fb3;
-            margin-bottom: 20px; letter-spacing: -2px;
-        }
+        .splash-logo { font-family: var(--font-title); font-size: 3rem; color: #fff; text-shadow: 3px 3px 0px #d48fb3; margin-bottom: 20px; letter-spacing: -2px; }
         .splash-subtitle { font-size: 1.2rem; margin-bottom: 40px; color: #ccc; }
-
-        .loading-bar-container {
-            width: 300px; height: 20px; border: 2px solid #fff;
-            padding: 2px; background-color: #000;
-            display: flex; gap: 2px;
-        }
-        .loading-block {
-            width: 20px; height: 100%; background-color: #000080; opacity: 0;
-            animation: loadBlock 1.5s infinite;
-        }
+        .loading-bar-container { width: 300px; height: 20px; border: 2px solid #fff; padding: 2px; background-color: #000; display: flex; gap: 2px; }
+        .loading-block { width: 20px; height: 100%; background-color: #000080; opacity: 0; animation: loadBlock 1.5s infinite; }
         .loading-block.paused { animation: none !important; opacity: 1; }
         @keyframes loadBlock { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
-
-        .splash-options {
-            margin-top: 30px; display: flex; align-items: center; gap: 10px;
-            font-size: 14px; color: #ccc;
-        }
-        #skip-splash-btn {
-            margin-top: 20px; background-color: #c0c0c0;
-            border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
-            padding: 8px 20px; font-weight: bold; cursor: pointer; font-size: 14px;
-            font-family: sans-serif;
-        }
+        .splash-options { margin-top: 30px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ccc; }
+        #skip-splash-btn { margin-top: 20px; background-color: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 8px 20px; font-weight: bold; cursor: pointer; font-size: 14px; font-family: sans-serif; }
 
         /* --- ESCRITORIO --- */
         .desktop {
-            flex-grow: 1; padding: 20px;
-            display: grid; grid-template-columns: repeat(auto-fill, 90px); gap: 20px;
-            align-content: start; position: relative; z-index: 1;
+            flex-grow: 1; padding: 20px; position: relative; z-index: 1;
+            /* Importante: quitamos display grid para permitir posicionamiento absoluto de arrastre */
         }
 
+        /* Iconos del escritorio */
         .project-icon {
+            position: absolute; /* Para arrastre */
             display: flex; flex-direction: column; align-items: center; text-align: center;
-            cursor: pointer; color: var(--text-light); 
+            cursor: grab; color: var(--text-light); 
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            text-decoration: none; padding: 5px; 
+            text-decoration: none; padding: 5px; width: 90px;
             border: 1px dotted transparent; user-select: none;
-            transition: background 0.2s;
+            transition: background 0.1s;
         }
+        .project-icon:active { cursor: grabbing; }
         .project-icon.selected {
-            background-color: var(--highlight); 
-            border: 1px dotted var(--border-light);
+            background-color: var(--highlight); border: 1px dotted var(--border-light);
             color: var(--bg-window-content);
         }
         .project-icon span { font-size: 12px; line-height: 1.2; word-wrap: break-word; }
-        .icon-emoji { font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); }
+        .icon-emoji { font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); pointer-events: none; }
 
-        .watermark-logo {
-            position: absolute; bottom: 60px; right: 30px; text-align: right;
-            pointer-events: none; z-index: 0; opacity: 0.6;
-        }
-        .watermark-logo h1 {
-            color: var(--text-light); font-size: 2rem; 
-            text-shadow: 3px 3px 0px var(--highlight);
-            font-family: var(--font-title); line-height: 0.9; letter-spacing: -1px;
-        }
+        .watermark-logo { position: absolute; bottom: 60px; right: 30px; text-align: right; pointer-events: none; z-index: 0; opacity: 0.6; }
+        .watermark-logo h1 { color: var(--text-light); font-size: 2rem; text-shadow: 3px 3px 0px var(--highlight); font-family: var(--font-title); line-height: 0.9; letter-spacing: -1px; }
         .watermark-logo span { font-size: 0.8rem; display: block; color: var(--text-light); }
 
         /* --- BARRA DE TAREAS --- */
@@ -154,39 +96,36 @@
             box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 100; position: relative;
             transition: background-color 0.3s;
         }
-
         .start-btn {
-            background-color: var(--bg-window); 
-            border: 1px solid var(--border-dark);
+            background-color: var(--bg-window); border: 1px solid var(--border-dark);
             border-top-color: var(--border-light); border-left-color: var(--border-light);
             padding: 5px 10px; font-weight: bold; font-size: 12px;
             display: flex; align-items: center; gap: 5px; cursor: pointer;
             height: 30px; color: var(--text-main);
             box-shadow: inset 1px 1px 0px var(--border-light);
-            position: relative; z-index: 101;
-            border-radius: var(--window-radius);
+            position: relative; z-index: 101; border-radius: var(--window-radius);
         }
         .start-btn:active, .start-btn.open {
             border-top-color: var(--border-dark); border-left-color: var(--border-dark);
             border-bottom-color: var(--border-light); border-right-color: var(--border-light);
             padding: 6px 9px 4px 11px; 
         }
-        .start-btn img { width: 16px; height: 16px; filter: brightness(0) invert(var(--icon-invert, 0)); }
+        .start-btn img { width: 16px; height: 16px; }
         .theme-tui .start-btn img { display: none; }
 
         .divider { width: 2px; height: 20px; background: var(--border-dark); border-right: 1px solid var(--border-light); margin: 0 10px; }
         .system-tray { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-main); padding-right: 5px; }
+        
+        /* Icono de Mute en bandeja */
+        .tray-icon { cursor: pointer; font-size: 14px; user-select: none; }
 
         /* --- MENÚ DE INICIO --- */
         .start-menu {
             position: absolute; bottom: 40px; left: 5px; width: 250px;
-            background-color: var(--bg-window); 
-            border: 2px solid var(--border-light);
+            background-color: var(--bg-window); border: 2px solid var(--border-light);
             border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
-            box-shadow: var(--shadow);
-            display: none; flex-direction: column; z-index: 99;
-            border-radius: var(--window-radius);
-            overflow: hidden;
+            box-shadow: var(--shadow); display: none; flex-direction: column; z-index: 99;
+            border-radius: var(--window-radius); overflow: hidden;
         }
         .start-menu.open { display: flex; }
         .start-menu-header {
@@ -205,19 +144,16 @@
         .start-item:hover { background-color: var(--highlight); color: var(--text-light); }
         .start-item .icon-emoji { font-size: 24px; margin-bottom: 0; filter: none; }
 
-        /* --- VENTANAS FLOTANTES --- */
+        /* --- VENTANAS --- */
         .window-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 400px; background-color: var(--bg-window);
             border: 2px solid var(--border-light); 
             border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
-            box-shadow: var(--shadow);
-            display: none; flex-direction: column; z-index: 1000;
-            border-radius: var(--window-radius);
-            overflow: hidden;
+            box-shadow: var(--shadow); display: none; flex-direction: column; z-index: 1000;
+            border-radius: var(--window-radius); overflow: hidden;
         }
         .window-modal.active { display: flex; }
-
         .window-header {
             background: var(--highlight); color: var(--text-title);
             padding: 3px 5px; display: flex; justify-content: space-between; align-items: center;
@@ -225,7 +161,6 @@
         }
         .window-title { display: flex; align-items: center; gap: 5px; padding-left: 2px; }
         .window-controls { display: flex; gap: 2px; }
-
         .win-btn {
             width: 16px; height: 14px; background-color: var(--bg-window);
             border: 1px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
@@ -258,10 +193,8 @@
             padding: 4px; border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light);
             font-family: var(--font-main); font-size: 14px; background: var(--bg-window-content); color: var(--text-main);
         }
-        
         .config-toggle { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
         .config-toggle span { font-size: 12px; }
-        
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -275,7 +208,6 @@
         }
         input:checked + .slider { background-color: var(--highlight); }
         input:checked + .slider:before { transform: translateX(18px); }
-
         .theme-selector { display: flex; gap: 5px; margin-top: 5px; }
         .theme-btn {
             flex: 1; padding: 8px; border: 2px solid var(--border-dark); 
@@ -288,39 +220,20 @@
             background: var(--highlight); color: var(--text-light);
         }
 
-        /* Modal de Reinicio (pequeño) */
-        #restart-modal {
-            width: 320px;
-            z-index: 2000; /* Por encima de todo */
-        }
-        #restart-modal .window-content {
-            padding: 15px;
-            gap: 10px;
-        }
-        #restart-modal .action-btn {
-            margin-top: 5px;
-            align-self: stretch;
-            text-align: center;
-        }
-        #restart-modal .buttons-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        #restart-modal .buttons-row .action-btn {
-            flex: 1;
-        }
+        /* Modal de Reinicio */
+        #restart-modal { width: 320px; z-index: 2000; }
+        #restart-modal .window-content { padding: 15px; gap: 10px; }
+        #restart-modal .action-btn { margin-top: 5px; align-self: stretch; text-align: center; }
+        #restart-modal .buttons-row { display: flex; gap: 10px; margin-top: 10px; }
+        #restart-modal .buttons-row .action-btn { flex: 1; }
 
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); display: none; z-index: 999;
-        }
+        /* Ventana de Papelera */
+        #trash-window { width: 350px; }
+        #trash-window .window-content { min-height: 150px; align-items: center; justify-content: center; text-align: center; color: var(--text-main); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 999; }
         .overlay.active { display: block; }
-        /* Overlay más oscuro para el modal de reinicio */
-        #overlay-restart {
-            background: rgba(0,0,0,0.5);
-            z-index: 1999;
-        }
+        #overlay-restart { background: rgba(0,0,0,0.5); z-index: 1999; }
 
         .toast {
             position: fixed; bottom: 60px; right: 20px;
@@ -330,9 +243,7 @@
             color: var(--text-main);
         }
         .toast.show { display: block; opacity: 1; }
-
         .hidden { display: none !important; }
-        .fade-out { opacity: 0; pointer-events: none; }
 
     </style>
 </head>
@@ -375,24 +286,20 @@
         <div id="taskbar-status" style="font-size: 11px; color: var(--text-main);"></div>
         <div class="system-tray">
             <span id="user-display" style="font-weight: bold; margin-right: 5px;"></span>
-            <span>🔊</span>
+            <span class="tray-icon" id="mute-btn" title="Silenciar">🔊</span>
             <span>🌐</span>
             <span id="clock">--:--</span>
         </div>
     </footer>
 
-    <!-- OVERLAY GENERAL -->
+    <!-- OVERLAYS -->
     <div class="overlay" id="overlay"></div>
-    <!-- OVERLAY PARA REINICIO -->
     <div class="overlay" id="overlay-restart"></div>
 
-    <!-- VENTANA MODAL (Proyectos) -->
+    <!-- VENTANA PROYECTO -->
     <div class="window-modal" id="project-window">
         <div class="window-header" id="window-header">
-            <div class="window-title">
-                <span id="modal-icon">📁</span>
-                <span id="modal-title">Título</span>
-            </div>
+            <div class="window-title"><span id="modal-icon">📁</span><span id="modal-title">Título</span></div>
             <div class="window-controls"><div class="win-btn" id="close-btn">X</div></div>
         </div>
         <div class="window-content">
@@ -402,7 +309,19 @@
         </div>
     </div>
 
-    <!-- VENTANA DE CONFIGURACIÓN -->
+    <!-- VENTANA PAPELERA -->
+    <div class="window-modal" id="trash-window">
+        <div class="window-header" id="trash-header">
+            <div class="window-title"><span>🗑️</span><span>Papelera de Reciclaje</span></div>
+            <div class="window-controls"><div class="win-btn" id="close-trash">X</div></div>
+        </div>
+        <div class="window-content">
+            <p style="font-weight: bold; font-size: 16px; color: var(--text-main);">La papelera está vacía.</p>
+            <p style="font-size: 12px; margin-top: 5px; color: var(--border-dark);">Arrastra aquí tus proyectos rotos o ideas descartadas.</p>
+        </div>
+    </div>
+
+    <!-- VENTANA CONFIGURACIÓN -->
     <div class="window-modal" id="config-window" style="width: 350px;">
         <div class="window-header" id="config-header">
             <div class="window-title"><span>⚙️</span><span>Configuración</span></div>
@@ -410,8 +329,6 @@
         </div>
         <div class="window-content">
             <h2>Panel de Control</h2>
-            
-            <!-- Selector de Tema (Solo guarda selección, no aplica) -->
             <div class="config-group">
                 <label>Apariencia / Tema:</label>
                 <div class="theme-selector" id="theme-selector">
@@ -421,38 +338,34 @@
                 </div>
                 <p style="font-size: 10px; color: var(--border-dark); margin-top: 5px;">Requiere reinicio para aplicar.</p>
             </div>
-
             <div class="config-group">
                 <label for="username-input">Nombre de Usuario:</label>
                 <input type="text" id="username-input" placeholder="Escribe tu nombre...">
             </div>
-
             <div class="config-group">
                 <label>Modo de Trabajo:</label>
                 <div class="config-toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="online-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
+                    <label class="switch"><input type="checkbox" id="online-toggle" checked><span class="slider"></span></label>
                     <span id="online-status-text">Online 🌐</span>
                 </div>
             </div>
-
+            <div class="config-group">
+                <label>Sonido:</label>
+                <div class="config-toggle">
+                    <label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label>
+                    <span id="sound-status-text">Activado 🔔</span>
+                </div>
+            </div>
             <div class="config-group" style="margin-top: 15px; border-top: 1px solid var(--border-dark); padding-top: 10px;">
                 <label>Pantalla de Inicio:</label>
                 <div class="config-toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="splash-toggle">
-                        <span class="slider"></span>
-                    </label>
+                    <label class="switch"><input type="checkbox" id="splash-toggle"><span class="slider"></span></label>
                     <span id="splash-status-text">Ocultar Animación</span>
                 </div>
             </div>
-
             <div class="config-group" style="margin-top: 15px; border-top: 1px solid var(--border-dark); padding-top: 10px;">
                 <button class="action-btn" id="btn-clear-cache" style="align-self: stretch;">🗑️ Actualizar Caché</button>
             </div>
-
             <button class="action-btn" id="btn-save-config" style="align-self: stretch; margin-top: 10px;">💾 Guardar Cambios</button>
         </div>
     </div>
@@ -461,7 +374,6 @@
     <div class="window-modal" id="restart-modal">
         <div class="window-header">
             <div class="window-title"><span>⚠️</span><span>Cambio de Apariencia</span></div>
-            <!-- No tiene botón de cerrar, se cierra con los botones de acción -->
         </div>
         <div class="window-content">
             <p style="font-weight: bold; margin-bottom: 5px;">¿Reiniciar ahora?</p>
@@ -475,6 +387,13 @@
 
     <!-- TOAST -->
     <div class="toast" id="toast">Mensaje</div>
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="sfx-click" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/click.wav" preload="auto"></audio>
+    <audio id="sfx-open" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/open.wav" preload="auto"></audio>
+    <audio id="sfx-close" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/close.wav" preload="auto"></audio>
+    <audio id="sfx-error" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/error.wav" preload="auto"></audio>
+    <audio id="sfx-trash" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/trash.wav" preload="auto"></audio>
 
     <script>
         // --- DATOS DE TUS PROYECTOS ---
@@ -493,13 +412,12 @@
             { id: 12, name: "Libreta de Notas", desc: "Bloc de notas rápido.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "📓" }
         ];
 
-        // Referencias DOM
+        // DOM References
         const body = document.body;
         const splashScreen = document.getElementById('splash-screen');
         const loadingBar = document.getElementById('loading-bar');
         const hideSplashCheckbox = document.getElementById('hide-splash-checkbox');
         const skipSplashBtn = document.getElementById('skip-splash-btn');
-        
         const desktop = document.getElementById('desktop');
         const startMenuList = document.getElementById('start-menu-list');
         const startBtn = document.getElementById('start-btn');
@@ -513,13 +431,15 @@
         const modalLink = document.getElementById('modal-link');
         const modalIcon = document.getElementById('modal-icon');
         const taskbarStatus = document.getElementById('taskbar-status');
-        
         const configWindow = document.getElementById('config-window');
         const closeConfig = document.getElementById('close-config');
         const configHeader = document.getElementById('config-header');
         const usernameInput = document.getElementById('username-input');
         const onlineToggle = document.getElementById('online-toggle');
         const onlineStatusText = document.getElementById('online-status-text');
+        const soundToggle = document.getElementById('sound-toggle');
+        const soundStatusText = document.getElementById('sound-status-text');
+        const muteBtn = document.getElementById('mute-btn');
         const splashToggle = document.getElementById('splash-toggle');
         const splashStatusText = document.getElementById('splash-status-text');
         const userDisplay = document.getElementById('user-display');
@@ -527,67 +447,74 @@
         const btnClearCache = document.getElementById('btn-clear-cache');
         const toast = document.getElementById('toast');
         const themeButtons = document.querySelectorAll('.theme-btn');
-
-        // Modal de reinicio
         const restartModal = document.getElementById('restart-modal');
         const overlayRestart = document.getElementById('overlay-restart');
         const btnRestartYes = document.getElementById('btn-restart-yes');
         const btnRestartNo = document.getElementById('btn-restart-no');
+        const trashWindow = document.getElementById('trash-window');
+        const closeTrash = document.getElementById('close-trash');
+        const trashHeader = document.getElementById('trash-header');
+
+        // Audio
+        const sfxClick = document.getElementById('sfx-click');
+        const sfxOpen = document.getElementById('sfx-open');
+        const sfxClose = document.getElementById('sfx-close');
+        const sfxError = document.getElementById('sfx-error');
+        const sfxTrash = document.getElementById('sfx-trash');
 
         let selectedIcon = null;
-        let currentTheme = 'theme-win98'; // Tema actual aplicado
-        let pendingTheme = null; // Tema seleccionado pendiente de reinicio
+        let currentTheme = 'theme-win98';
+        let pendingTheme = null;
+        let isDraggingIcon = false;
+        let iconOffsetX = 0, iconOffsetY = 0;
+        let draggedIcon = null;
+        let soundEnabled = localStorage.getItem('moustache_sound') !== 'false';
+
+        // --- AUDIO HELPERS ---
+        function playSound(audioElement) {
+            if (!soundEnabled) return;
+            try {
+                audioElement.currentTime = 0;
+                audioElement.play().catch(e => console.log("Audio bloqueado por el navegador:", e));
+            } catch (e) { console.log(e); }
+        }
+
+        function updateSoundUI() {
+            soundStatusText.textContent = soundEnabled ? "Activado 🔔" : "Desactivado 🔇";
+            muteBtn.textContent = soundEnabled ? "🔊" : "🔇";
+            soundToggle.checked = soundEnabled;
+        }
 
         // --- LÓGICA DE TEMAS ---
         function applyTheme(themeName) {
-            // Quitar clases de temas anteriores
             body.classList.remove('theme-win98', 'theme-tui', 'theme-distro');
-            // Añadir nuevo tema
             body.classList.add(themeName);
             currentTheme = themeName;
-
-            // Actualizar UI de botones
             themeButtons.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.theme === themeName);
             });
-            
-            // Guardar en localStorage
             localStorage.setItem('moustache_theme', themeName);
         }
 
-        // Cargar tema guardado al iniciar
         const savedTheme = localStorage.getItem('moustache_theme');
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        } else {
-            // Si no hay tema guardado, aplicar el por defecto (win98)
-            applyTheme('theme-win98');
-        }
+        if (savedTheme) applyTheme(savedTheme);
+        else applyTheme('theme-win98');
 
-        // Event listeners para los botones de tema (Solo selección, no aplica)
         themeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
+                playSound(sfxClick);
                 const selectedTheme = btn.dataset.theme;
-                
-                // Si ya está activo, no hacer nada
                 if (selectedTheme === currentTheme) return;
-
-                // Marcar visualmente el botón seleccionado (pero no aplicar aún)
                 themeButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
                 pendingTheme = selectedTheme;
-
-                // Mostrar el modal de reinicio
                 openRestartModal();
             });
         });
 
-        // Funciones del modal de reinicio
         function openRestartModal() {
             restartModal.classList.add('active');
             overlayRestart.classList.add('active');
-            // Centrar el modal
             restartModal.style.top = '50%';
             restartModal.style.left = '50%';
             restartModal.style.transform = 'translate(-50%, -50%)';
@@ -596,8 +523,6 @@
         function closeRestartModal() {
             restartModal.classList.remove('active');
             overlayRestart.classList.remove('active');
-            
-            // Si se cancela, revertir la selección visual al tema actual
             if (pendingTheme) {
                 themeButtons.forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.theme === currentTheme);
@@ -606,94 +531,150 @@
             }
         }
 
-        // Botón Sí del modal de reinicio
         btnRestartYes.addEventListener('click', () => {
+            playSound(sfxClick);
             if (pendingTheme) {
-                // Guardar el nuevo tema en localStorage
                 localStorage.setItem('moustache_theme', pendingTheme);
-                // Recargar la página para aplicar cambios
                 location.reload();
             }
         });
-
-        // Botón No del modal de reinicio
-        btnRestartNo.addEventListener('click', closeRestartModal);
-
-        // Cerrar modal al hacer clic en el overlay
+        btnRestartNo.addEventListener('click', () => { playSound(sfxClose); closeRestartModal(); });
         overlayRestart.addEventListener('click', closeRestartModal);
 
-        // --- LÓGICA DEL SPLASH ---
+        // --- SPLASH ---
         let splashTimeout = null;
-
         function finishSplash() {
-            if (splashTimeout) {
-                clearTimeout(splashTimeout);
-                splashTimeout = null;
-            }
-
-            document.querySelectorAll('.loading-block').forEach(block => {
-                block.classList.add('paused');
-            });
-
+            if (splashTimeout) { clearTimeout(splashTimeout); splashTimeout = null; }
+            document.querySelectorAll('.loading-block').forEach(block => block.classList.add('paused'));
             splashScreen.classList.add('fade-out');
-
-            setTimeout(() => {
-                splashScreen.classList.add('hidden');
-            }, 800);
+            setTimeout(() => { splashScreen.classList.add('hidden'); }, 800);
         }
 
         function initSplash() {
             const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
-            
-            if (hideSplash) {
-                splashScreen.classList.add('hidden');
-                return;
-            }
-
+            if (hideSplash) { splashScreen.classList.add('hidden'); return; }
             for (let i = 0; i < 10; i++) {
                 const block = document.createElement('div');
                 block.className = 'loading-block';
                 block.style.animationDelay = `${i * 0.15}s`;
                 loadingBar.appendChild(block);
             }
-
-            splashTimeout = setTimeout(() => {
-                finishSplash();
-            }, 4000);
-
+            splashTimeout = setTimeout(() => { finishSplash(); }, 4000);
             skipSplashBtn.addEventListener('click', finishSplash);
-
             hideSplashCheckbox.addEventListener('change', (e) => {
                 localStorage.setItem('moustache_hide_splash', e.target.checked);
             });
         }
 
-        // --- ICONOS DEL ESCRITORIO ---
+        // --- ICONOS Y ARRASTRE ---
         function createDesktopIcons() {
+            // Icono Configuración
             const configDiv = document.createElement('div');
             configDiv.className = 'project-icon';
             configDiv.innerHTML = `<div class="icon-emoji">⚙️</div><span>Configuración</span>`;
-            configDiv.addEventListener('click', (e) => { e.stopPropagation(); selectIcon(configDiv); });
-            configDiv.addEventListener('dblclick', () => openConfig());
+            // Posición inicial por defecto
+            configDiv.style.left = '20px';
+            configDiv.style.top = '20px';
+            configDiv.dataset.id = 'config';
+            setupIconEvents(configDiv, null, true);
             desktop.appendChild(configDiv);
 
-            projects.forEach(project => {
+            // Icono Papelera
+            const trashDiv = document.createElement('div');
+            trashDiv.className = 'project-icon';
+            trashDiv.innerHTML = `<div class="icon-emoji">🗑️</div><span>Papelera</span>`;
+            trashDiv.style.left = '20px';
+            trashDiv.style.top = '130px';
+            trashDiv.dataset.id = 'trash';
+            setupIconEvents(trashDiv, null, false, true);
+            desktop.appendChild(trashDiv);
+
+            // Proyectos
+            projects.forEach((project, index) => {
                 const div = document.createElement('div');
                 div.className = 'project-icon';
                 div.innerHTML = `<div class="icon-emoji">${project.icon}</div><span>${project.name}</span>`;
-                div.addEventListener('click', (e) => { e.stopPropagation(); selectIcon(div); });
-                div.addEventListener('dblclick', () => openWindow(project));
+                div.dataset.id = project.id;
+                
+                // Calcular posición inicial (cuadrícula)
+                const col = Math.floor(index / 5);
+                const row = index % 5;
+                const defaultX = 20 + (col * 110);
+                const defaultY = 20 + (row * 110);
+
+                // Cargar posición guardada
+                const savedPos = localStorage.getItem(`icon_pos_${project.id}`);
+                if (savedPos) {
+                    const pos = JSON.parse(savedPos);
+                    div.style.left = pos.x + 'px';
+                    div.style.top = pos.y + 'px';
+                } else {
+                    div.style.left = defaultX + 'px';
+                    div.style.top = defaultY + 'px';
+                }
+
+                setupIconEvents(div, project);
                 desktop.appendChild(div);
             });
         }
 
-        // --- MENÚ DE INICIO ---
-        projects.forEach(project => {
-            const item = document.createElement('div');
-            item.className = 'start-item';
-            item.innerHTML = `<div class="icon-emoji">${project.icon}</div><span>${project.name}</span>`;
-            item.addEventListener('click', () => { openWindow(project); closeStartMenu(); });
-            startMenuList.appendChild(item);
+        // Función para configurar eventos de icono (selección + arrastre)
+        function setupIconEvents(element, projectData, isConfig = false, isTrash = false) {
+            // Click para seleccionar
+            element.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                selectIcon(element);
+                playSound(sfxClick);
+                
+                // Iniciar arrastre
+                isDraggingIcon = true;
+                draggedIcon = element;
+                const rect = element.getBoundingClientRect();
+                iconOffsetX = e.clientX - rect.left;
+                iconOffsetY = e.clientY - rect.top;
+                
+                // Traer al frente
+                document.querySelectorAll('.project-icon').forEach(el => el.style.zIndex = '1');
+                element.style.zIndex = '10';
+            });
+
+            // Doble clic para abrir
+            element.addEventListener('dblclick', () => {
+                if (isConfig) openConfig();
+                else if (isTrash) openTrash();
+                else if (projectData) openWindow(projectData);
+            });
+        }
+
+        // Movimiento global para arrastre
+        document.addEventListener('mousemove', (e) => {
+            if (!isDraggingIcon || !draggedIcon) return;
+            
+            const desktopRect = desktop.getBoundingClientRect();
+            let newX = e.clientX - desktopRect.left - iconOffsetX;
+            let newY = e.clientY - desktopRect.top - iconOffsetY;
+            
+            // Límites
+            if (newX < 0) newX = 0;
+            if (newY < 0) newY = 0;
+            if (newX > desktopRect.width - draggedIcon.offsetWidth) newX = desktopRect.width - draggedIcon.offsetWidth;
+            if (newY > desktopRect.height - draggedIcon.offsetHeight) newY = desktopRect.height - draggedIcon.offsetHeight;
+
+            draggedIcon.style.left = newX + 'px';
+            draggedIcon.style.top = newY + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingIcon && draggedIcon) {
+                // Guardar posición
+                const id = draggedIcon.dataset.id;
+                if (id) {
+                    const pos = { x: parseInt(draggedIcon.style.left), y: parseInt(draggedIcon.style.top) };
+                    localStorage.setItem(`icon_pos_${id}`, JSON.stringify(pos));
+                }
+            }
+            isDraggingIcon = false;
+            draggedIcon = null;
         });
 
         // --- SELECCIÓN ---
@@ -703,11 +684,22 @@
             selectedIcon = iconElement;
         }
 
-        desktop.addEventListener('click', () => {
-            if (selectedIcon) { selectedIcon.classList.remove('selected'); selectedIcon = null; }
+        // Click en escritorio vacío
+        desktop.addEventListener('mousedown', (e) => {
+            if (e.target === desktop) {
+                if (selectedIcon) { selectedIcon.classList.remove('selected'); selectedIcon = null; }
+            }
         });
 
-        // --- MENÚ DE INICIO FUNCIONALIDAD ---
+        // --- MENÚ DE INICIO ---
+        projects.forEach(project => {
+            const item = document.createElement('div');
+            item.className = 'start-item';
+            item.innerHTML = `<div class="icon-emoji">${project.icon}</div><span>${project.name}</span>`;
+            item.addEventListener('click', () => { playSound(sfxClick); openWindow(project); closeStartMenu(); });
+            startMenuList.appendChild(item);
+        });
+
         function toggleStartMenu() {
             startMenu.classList.toggle('open');
             startBtn.classList.toggle('open');
@@ -717,13 +709,14 @@
             startBtn.classList.remove('open');
         }
 
-        startBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleStartMenu(); });
+        startBtn.addEventListener('click', (e) => { e.stopPropagation(); playSound(sfxClick); toggleStartMenu(); });
         document.addEventListener('click', (e) => {
             if (!startMenu.contains(e.target) && !startBtn.contains(e.target)) closeStartMenu();
         });
 
-        // --- VENTANA DE PROYECTOS ---
+        // --- VENTANA PROYECTO ---
         function openWindow(project) {
+            playSound(sfxOpen);
             modalTitle.textContent = project.name + " - Moustache Lab";
             modalHeading.textContent = project.name;
             modalDesc.textContent = project.desc;
@@ -738,14 +731,32 @@
         }
 
         function closeWindow() {
+            playSound(sfxClose);
             modal.classList.remove('active');
             overlay.classList.remove('active');
             taskbarStatus.textContent = "";
         }
         closeBtn.addEventListener('click', closeWindow);
 
-        // --- VENTANA DE CONFIGURACIÓN ---
+        // --- VENTANA PAPELERA ---
+        function openTrash() {
+            playSound(sfxTrash);
+            trashWindow.classList.add('active');
+            overlay.classList.add('active');
+            taskbarStatus.textContent = "Papelera de Reciclaje";
+            trashWindow.style.top = '50%'; trashWindow.style.left = '50%'; trashWindow.style.transform = 'translate(-50%, -50%)';
+        }
+        function closeTrashWindow() {
+            playSound(sfxClose);
+            trashWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            taskbarStatus.textContent = "";
+        }
+        closeTrash.addEventListener('click', closeTrashWindow);
+
+        // --- VENTANA CONFIGURACIÓN ---
         function openConfig() {
+            playSound(sfxOpen);
             const savedUser = localStorage.getItem('moustache_username') || '';
             const isOnline = localStorage.getItem('moustache_online') !== 'false';
             const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
@@ -753,11 +764,10 @@
             usernameInput.value = savedUser;
             onlineToggle.checked = isOnline;
             updateOnlineUI(isOnline);
-            
             splashToggle.checked = hideSplash;
             updateSplashUI(hideSplash);
+            updateSoundUI();
 
-            // Sincronizar botones de tema con el tema actual
             themeButtons.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.theme === currentTheme);
             });
@@ -765,30 +775,44 @@
             configWindow.classList.add('active');
             overlay.classList.add('active');
             taskbarStatus.textContent = "Configuración abierta";
-            
             configWindow.style.top = '50%'; configWindow.style.left = '50%'; configWindow.style.transform = 'translate(-50%, -50%)';
         }
 
         function closeConfigWindow() {
+            playSound(sfxClose);
             configWindow.classList.remove('active');
             overlay.classList.remove('active');
             taskbarStatus.textContent = "";
         }
         closeConfig.addEventListener('click', closeConfigWindow);
-        overlay.addEventListener('click', () => { closeWindow(); closeConfigWindow(); });
+        overlay.addEventListener('click', () => { closeWindow(); closeConfigWindow(); closeTrashWindow(); });
 
         function updateOnlineUI(isOnline) {
             onlineStatusText.textContent = isOnline ? "Online 🌐" : "Offline 📴";
         }
-
         function updateSplashUI(isHidden) {
             splashStatusText.textContent = isHidden ? "Animación Desactivada" : "Animación Activada";
         }
 
         onlineToggle.addEventListener('change', (e) => updateOnlineUI(e.target.checked));
         splashToggle.addEventListener('change', (e) => updateSplashUI(e.target.checked));
+        
+        soundToggle.addEventListener('change', (e) => {
+            soundEnabled = e.target.checked;
+            localStorage.setItem('moustache_sound', soundEnabled);
+            updateSoundUI();
+            if (soundEnabled) playSound(sfxClick);
+        });
+
+        muteBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('moustache_sound', soundEnabled);
+            updateSoundUI();
+            if (soundEnabled) playSound(sfxClick);
+        });
 
         btnSaveConfig.addEventListener('click', () => {
+            playSound(sfxClick);
             const newName = usernameInput.value.trim();
             const isOnline = onlineToggle.checked;
             const hideSplash = splashToggle.checked;
@@ -798,11 +822,11 @@
             localStorage.setItem('moustache_hide_splash', hideSplash);
 
             userDisplay.textContent = newName ? `👤 ${newName}` : '';
-            
             showToast("✅ Configuración guardada correctamente.");
         });
 
         btnClearCache.addEventListener('click', async () => {
+            playSound(sfxClick);
             if(confirm("¿Estás seguro de que quieres borrar los datos locales y actualizar la caché? Se recargará la página.")) {
                 localStorage.clear();
                 if ('caches' in window) {
@@ -826,7 +850,6 @@
                 const rect = windowElement.getBoundingClientRect();
                 offsetX = e.clientX - rect.left;
                 offsetY = e.clientY - rect.top;
-                
                 windowElement.style.transform = 'none';
                 windowElement.style.left = rect.left + 'px';
                 windowElement.style.top = rect.top + 'px';
@@ -851,7 +874,7 @@
 
         makeDraggable(document.getElementById('window-header'), modal);
         makeDraggable(configHeader, configWindow);
-        // El modal de reinicio no se puede arrastrar, es fijo.
+        makeDraggable(trashHeader, trashWindow);
 
         // --- TOAST ---
         function showToast(message) {
@@ -875,6 +898,7 @@
         // --- INICIALIZACIÓN ---
         initSplash();
         createDesktopIcons();
+        updateSoundUI();
         
         setInterval(updateClock, 1000);
         updateClock();
