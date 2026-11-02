@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Proyectos - Win98 Style</title>
+    <style>
+        /* --- CONFIGURACIÓN GENERAL --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* El azul cielo de la imagen */
+            background-color: #6da2d8; 
+            font-family: 'MS Sans Serif', 'Pixelated', sans-serif;
+            height: 100vh;
+            overflow: hidden; /* Para que no haya scroll como en un escritorio real */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* --- ZONA DEL ESCRITORIO (Donde irían tus proyectos) --- */
+        .desktop {
+            flex-grow: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 90px); /* Cuadrícula de iconos */
+            gap: 20px;
+            align-content: start;
+        }
+
+        /* --- ICONOS DE PROYECTOS --- */
+        .project-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            text-decoration: none;
+            transition: transform 0.1s;
+        }
+
+        .project-icon:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .project-icon img {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 5px;
+            /* Filtro para que los iconos se vean un poco más retro */
+            image-rendering: pixelated; 
+        }
+
+        /* --- LOGO FLOTANTE (El de la imagen) --- */
+        .watermark-logo {
+            position: absolute;
+            bottom: 80px; /* Un poco arriba de la barra de tareas */
+            right: 40px;
+            text-align: right;
+            pointer-events: none; /* No interfiere con los clicks */
+            z-index: 1;
+        }
+
+        .watermark-logo h1 {
+            color: #fff;
+            font-size: 2rem;
+            text-shadow: 3px 3px 0px #d48fb3; /* Sombra rosa */
+            font-family: 'Arial Black', sans-serif;
+            line-height: 0.9;
+            letter-spacing: -1px;
+        }
+
+        .watermark-logo span {
+            font-size: 0.8rem;
+            display: block;
+            color: #fff;
+            text-shadow: 1px 1px 0px #d48fb3;
+        }
+
+        /* --- BARRA DE TAREAS (Estilo Rosa) --- */
+        .taskbar {
+            height: 40px;
+            background-color: #f3c1d7; /* Rosa pastel */
+            border-top: 2px solid #fff; /* Brillo superior */
+            border-bottom: 2px solid #a36d87; /* Sombra inferior */
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        /* Botón de Inicio */
+        .start-btn {
+            background-color: #e6e6e6; /* Gris clásico de Windows */
+            border: 1px solid #000;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            border-bottom-color: #808080;
+            border-right-color: #808080;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            height: 30px;
+            box-shadow: inset 1px 1px 0px #dfdfdf;
+        }
+        
+        .start-btn:active {
+            border-top-color: #808080;
+            border-left-color: #808080;
+            border-bottom-color: #fff;
+            border-right-color: #fff;
+            padding: 6px 9px 4px 11px; /* Efecto de presión */
+        }
+
+        .start-btn img {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Separador de la barra */
+        .divider {
+            width: 2px;
+            height: 20px;
+            background: #a36d87;
+            border-right: 1px solid #fff;
+            margin: 0 10px;
+        }
+
+        /* Reloj y bandeja del sistema */
+        .system-tray {
+            margin-left: auto; /* Empuja a la derecha */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #000;
+            padding-right: 5px;
+        }
+
+        /* Iconos de la bandeja */
+        .tray-icon {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ZONA DE ESCRITORIO -->
+    <main class="desktop">
+        <!-- Icono de Proyecto 1 -->
+        <a href="#" class="project-icon">
+            <!-- Puedes cambiar esto por un icono real o un emoji -->
+            <img src="https://win98icons.alexmeub.com/icons/png/folder_closed-4.png" alt="Carpeta">
+            <span>Proyecto 1</span>
+        </a>
+
+        <!-- Icono de Proyecto 2 -->
+        <a href="#" class="project-icon">
+            <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png" alt="PC">
+            <span>Web App</span>
+        </a>
+
+        <!-- Icono de Proyecto 3 -->
+        <a href="#" class="project-icon">
+            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" alt="Internet">
+            <span>Portafolio</span>
+        </a>
+    </main>
+
+    <!-- LOGO FLOTANTE (Estilo Windows 98 Mobile) -->
+    <div class="watermark-logo">
+        <!-- Aquí puedes poner una imagen real si tienes el logo -->
+        <h1>Windows 98</h1>
+        <span>Mobile Projects</span>
+    </div>
+
+    <!-- BARRA DE TAREAS ROSA -->
+    <footer class="taskbar">
+        <button class="start-btn">
+            <!-- Icono de inicio clásico -->
+            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
+            Inicio
+        </button>
+        
+        <div class="divider"></div>
+        
+        <!-- Botones de ventanas abiertas (puedes agregar proyectos aquí) -->
+        <div style="font-size: 11px; padding: 0 10px; border: 1px solid #a36d87; border-right-color: #fff; height: 25px; display: flex; align-items: center; background: #f9dbe8;">
+            Mis Proyectos
+        </div>
+
+        <div class="system-tray">
+            <!-- Iconos de volumen y red (opcionales) -->
+            <span>🔊</span>
+            <span>🌐</span>
+            <span id="clock">8:52 PM</span>
+        </div>
+    </footer>
+
+    <script>
+        // Script simple para que el reloj funcione
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // la hora '0' debería ser '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            const strTime = hours + ':' + minutes + ' ' + ampm;
+            document.getElementById('clock').textContent = strTime;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
