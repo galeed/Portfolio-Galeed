@@ -13,7 +13,6 @@
             --highlight: #000080; --font-main: 'MS Sans Serif', 'Pixelated', sans-serif;
             --font-title: 'Arial Black', sans-serif; --window-radius: 0px;
             --shadow: 2px 2px 10px rgba(0,0,0,0.5);
-            /* Cursor personalizado (Flecha Win98 en Base64) */
             --cursor-default: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,2 L2,18 L6,14 L10,22 L12,21 L8,13 L14,13 Z" fill="white" stroke="black" stroke-width="1"/></svg>'), auto;
             --cursor-pointer: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10,2 L10,12 L12,10 L15,15 L17,14 L14,9 L18,9 Z" fill="white" stroke="black" stroke-width="1"/></svg>'), pointer;
         }
@@ -46,7 +45,6 @@
             cursor: var(--cursor-default);
         }
 
-        /* Aplicar cursor pointer a elementos interactivos */
         button, a, .project-icon, .start-item, .theme-btn, .tray-icon, input[type="checkbox"] {
             cursor: var(--cursor-pointer) !important;
         }
@@ -58,67 +56,32 @@
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 9998; /* Debajo del splash, encima de todo lo demás */
+            z-index: 9998;
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
             animation: flicker 0.15s infinite;
         }
 
-        @keyframes flicker {
-            0% { opacity: 0.95; }
-            50% { opacity: 1; }
-            100% { opacity: 0.95; }
-        }
+        @keyframes flicker { 0% { opacity: 0.95; } 50% { opacity: 1; } 100% { opacity: 0.95; } }
 
         /* --- PANTALLA AZUL (BSOD) --- */
         #bsod-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0000AA; /* Azul clásico de la muerte */
-            color: #ffffff;
+            background-color: #0000AA; color: #ffffff;
             font-family: 'Courier New', Courier, monospace;
-            z-index: 99999;
-            display: none; /* Oculto por defecto */
-            flex-direction: column;
-            padding: 40px;
-            font-size: 16px;
-            line-height: 1.4;
+            z-index: 99999; display: none; flex-direction: column; padding: 40px;
+            font-size: 16px; line-height: 1.4;
         }
-
-        #bsod-screen.active {
-            display: flex;
-        }
-
+        #bsod-screen.active { display: flex; }
         .bsod-header {
-            background-color: #C0C0C0;
-            color: #0000AA;
-            padding: 2px 8px;
-            font-weight: bold;
-            display: inline-block;
-            align-self: flex-start;
-            margin-bottom: 20px;
+            background-color: #C0C0C0; color: #0000AA; padding: 2px 8px;
+            font-weight: bold; display: inline-block; align-self: flex-start; margin-bottom: 20px;
         }
-
-        .bsod-content {
-            max-width: 800px;
-        }
-
-        .bsod-content p {
-            margin-bottom: 15px;
-        }
-
-        .bsod-content strong {
-            color: #ffffff;
-        }
-
-        .bsod-prompt {
-            margin-top: 30px;
-            font-weight: bold;
-        }
-
-        .bsod-blinking {
-            animation: blink 1s step-end infinite;
-        }
-
+        .bsod-content { max-width: 800px; }
+        .bsod-content p { margin-bottom: 15px; }
+        .bsod-content strong { color: #ffffff; }
+        .bsod-prompt { margin-top: 30px; font-weight: bold; }
+        .bsod-blinking { animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
         /* --- SPLASH --- */
@@ -141,7 +104,6 @@
 
         /* --- ESCRITORIO --- */
         .desktop { flex-grow: 1; padding: 20px; position: relative; z-index: 1; }
-
         .project-icon {
             position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center;
             cursor: grab; color: var(--text-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
@@ -149,10 +111,7 @@
             border: 1px dotted transparent; user-select: none; transition: background 0.1s;
         }
         .project-icon:active { cursor: grabbing; }
-        .project-icon.selected {
-            background-color: var(--highlight); border: 1px dotted var(--border-light);
-            color: var(--bg-window-content);
-        }
+        .project-icon.selected { background-color: var(--highlight); border: 1px dotted var(--border-light); color: var(--bg-window-content); }
         .project-icon span { font-size: 12px; line-height: 1.1; word-wrap: break-word; word-break: break-word; width: 100%; display: block; }
         .icon-emoji { font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); pointer-events: none; }
 
@@ -188,6 +147,9 @@
         .divider { width: 2px; height: 20px; background: var(--border-dark); border-right: 1px solid var(--border-light); margin: 0 10px; }
         .system-tray { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-main); padding-right: 5px; }
         .tray-icon { cursor: pointer; font-size: 14px; user-select: none; }
+        
+        /* Reloj con tooltip nativo */
+        #clock { cursor: help; }
 
         /* --- MENÚ DE INICIO --- */
         .start-menu {
@@ -581,14 +543,12 @@
                 triggerBsod();
                 resetBsodClick();
             } else {
-                // Si no llega a 3 clics, se resetea después de 1.5 segundos
                 bsodTimeout = setTimeout(resetBsodClick, 1500);
             }
         }
 
-        // Clics secretos en el logo de inicio y en el reloj
         startLogoImg.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar que se abra/cierre el menú de inicio
+            e.stopPropagation();
             handleSecretClick();
         });
 
@@ -596,7 +556,6 @@
             handleSecretClick();
         });
 
-        // Reiniciar desde BSOD
         bsodRebootBtn.addEventListener('click', () => {
             location.reload();
         });
@@ -999,7 +958,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
-        // --- RELOJ ---
+        // --- RELOJ Y FECHA ---
         function updateClock() {
             const now = new Date();
             let hours = now.getHours();
@@ -1008,7 +967,13 @@
             hours = hours % 12;
             hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('clock').textContent = hours + ':' + minutes + ' ' + ampm;
+            
+            // Actualizar el texto visible
+            clockDisplay.textContent = hours + ':' + minutes + ' ' + ampm;
+            
+            // Actualizar el tooltip (atributo title) con la fecha completa
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            clockDisplay.title = now.toLocaleDateString('es-ES', options);
         }
         
         // --- INICIALIZACIÓN ---
