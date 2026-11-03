@@ -13,6 +13,9 @@
             --highlight: #000080; --font-main: 'MS Sans Serif', 'Pixelated', sans-serif;
             --font-title: 'Arial Black', sans-serif; --window-radius: 0px;
             --shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            /* Cursor personalizado (Flecha Win98 en Base64) */
+            --cursor-default: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,2 L2,18 L6,14 L10,22 L12,21 L8,13 L14,13 Z" fill="white" stroke="black" stroke-width="1"/></svg>'), auto;
+            --cursor-pointer: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10,2 L10,12 L12,10 L15,15 L17,14 L14,9 L18,9 Z" fill="white" stroke="black" stroke-width="1"/></svg>'), pointer;
         }
 
         body.theme-tui {
@@ -40,12 +43,88 @@
             color: var(--text-main); height: 100vh; overflow: hidden;
             display: flex; flex-direction: column; justify-content: space-between;
             transition: background-color 0.3s, color 0.3s;
+            cursor: var(--cursor-default);
         }
+
+        /* Aplicar cursor pointer a elementos interactivos */
+        button, a, .project-icon, .start-item, .theme-btn, .tray-icon, input[type="checkbox"] {
+            cursor: var(--cursor-pointer) !important;
+        }
+
+        /* Efecto CRT para el tema TUI */
+        body.theme-tui::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9998; /* Debajo del splash, encima de todo lo demás */
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            50% { opacity: 1; }
+            100% { opacity: 0.95; }
+        }
+
+        /* --- PANTALLA AZUL (BSOD) --- */
+        #bsod-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0000AA; /* Azul clásico de la muerte */
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 99999;
+            display: none; /* Oculto por defecto */
+            flex-direction: column;
+            padding: 40px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        #bsod-screen.active {
+            display: flex;
+        }
+
+        .bsod-header {
+            background-color: #C0C0C0;
+            color: #0000AA;
+            padding: 2px 8px;
+            font-weight: bold;
+            display: inline-block;
+            align-self: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .bsod-content {
+            max-width: 800px;
+        }
+
+        .bsod-content p {
+            margin-bottom: 15px;
+        }
+
+        .bsod-content strong {
+            color: #ffffff;
+        }
+
+        .bsod-prompt {
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        .bsod-blinking {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
 
         /* --- SPLASH --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000; z-index: 9999;
+            background-color: #000; z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; transition: opacity 0.8s ease-out;
         }
@@ -61,34 +140,20 @@
         #skip-splash-btn { margin-top: 20px; background-color: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 8px 20px; font-weight: bold; cursor: pointer; font-size: 14px; font-family: sans-serif; }
 
         /* --- ESCRITORIO --- */
-        .desktop {
-            flex-grow: 1; padding: 20px; position: relative; z-index: 1;
-        }
+        .desktop { flex-grow: 1; padding: 20px; position: relative; z-index: 1; }
 
-        /* Iconos del escritorio corregidos */
         .project-icon {
-            position: absolute;
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            cursor: grab; color: var(--text-light); 
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            text-decoration: none; padding: 5px; 
-            width: 100px; /* Ancho aumentado para evitar superposición */
-            border: 1px dotted transparent; user-select: none;
-            transition: background 0.1s;
+            position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: grab; color: var(--text-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            text-decoration: none; padding: 5px; width: 100px;
+            border: 1px dotted transparent; user-select: none; transition: background 0.1s;
         }
         .project-icon:active { cursor: grabbing; }
         .project-icon.selected {
             background-color: var(--highlight); border: 1px dotted var(--border-light);
             color: var(--bg-window-content);
         }
-        .project-icon span { 
-            font-size: 12px; 
-            line-height: 1.1; 
-            word-wrap: break-word; 
-            word-break: break-word; /* Fuerza el corte de palabras largas */
-            width: 100%;
-            display: block;
-        }
+        .project-icon span { font-size: 12px; line-height: 1.1; word-wrap: break-word; word-break: break-word; width: 100%; display: block; }
         .icon-emoji { font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); pointer-events: none; }
 
         .watermark-logo { position: absolute; bottom: 60px; right: 30px; text-align: right; pointer-events: none; z-index: 0; opacity: 0.6; }
@@ -122,7 +187,6 @@
 
         .divider { width: 2px; height: 20px; background: var(--border-dark); border-right: 1px solid var(--border-light); margin: 0 10px; }
         .system-tray { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-main); padding-right: 5px; }
-        
         .tray-icon { cursor: pointer; font-size: 14px; user-select: none; }
 
         /* --- MENÚ DE INICIO --- */
@@ -255,6 +319,19 @@
 </head>
 <body class="theme-win98">
 
+    <!-- PANTALLA AZUL DE LA MUERTE (BSOD) -->
+    <div id="bsod-screen">
+        <div class="bsod-header">MOUSTACHE_OS</div>
+        <div class="bsod-content">
+            <p>Se ha producido un error fatal en <strong>0x000000M1CH1</strong> (MOUSTACHE_EXCEPTION_NOT_HANDLED)</p>
+            <p>El sistema ha detectado un exceso de <em>Michi</em> en el buffer de audio. Los bigotes han colapsado el kernel.</p>
+            <p>Si este es el primer error, reinicia el sistema. Si vuelve a ocurrir, contacta con el administrador de la colonia felina.</p>
+            <p>* Presiona cualquier tecla o haz clic en el botón de abajo para reiniciar.</p>
+            <p class="bsod-prompt">Presiona cualquier tecla para continuar <span class="bsod-blinking">_</span></p>
+            <button class="action-btn" id="bsod-reboot-btn" style="background-color: #C0C0C0; color: #0000AA; border-color: #fff #808080 #808080 #fff; font-family: 'Courier New', Courier, monospace; margin-top: 20px;">Reiniciar Sistema</button>
+        </div>
+    </div>
+
     <!-- PANTALLA DE INICIO -->
     <div id="splash-screen">
         <div class="splash-logo">Moustache</div>
@@ -285,7 +362,7 @@
     <!-- BARRA DE TAREAS -->
     <footer class="taskbar">
         <button class="start-btn" id="start-btn">
-            <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
+            <img id="start-logo-img" src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
             Inicio
         </button>
         <div class="divider"></div>
@@ -460,6 +537,12 @@
         const trashWindow = document.getElementById('trash-window');
         const closeTrash = document.getElementById('close-trash');
         const trashHeader = document.getElementById('trash-header');
+        
+        // BSOD References
+        const bsodScreen = document.getElementById('bsod-screen');
+        const bsodRebootBtn = document.getElementById('bsod-reboot-btn');
+        const startLogoImg = document.getElementById('start-logo-img');
+        const clockDisplay = document.getElementById('clock');
 
         // Audio
         const sfxClick = document.getElementById('sfx-click');
@@ -475,6 +558,48 @@
         let iconOffsetX = 0, iconOffsetY = 0;
         let draggedIcon = null;
         let soundEnabled = localStorage.getItem('moustache_sound') !== 'false';
+
+        // --- LÓGICA DEL EASTER EGG (BSOD) ---
+        let bsodClickCount = 0;
+        let bsodTimeout = null;
+
+        function triggerBsod() {
+            playSound(sfxError);
+            bsodScreen.classList.add('active');
+        }
+
+        function resetBsodClick() {
+            bsodClickCount = 0;
+            clearTimeout(bsodTimeout);
+        }
+
+        function handleSecretClick() {
+            bsodClickCount++;
+            clearTimeout(bsodTimeout);
+            
+            if (bsodClickCount >= 3) {
+                triggerBsod();
+                resetBsodClick();
+            } else {
+                // Si no llega a 3 clics, se resetea después de 1.5 segundos
+                bsodTimeout = setTimeout(resetBsodClick, 1500);
+            }
+        }
+
+        // Clics secretos en el logo de inicio y en el reloj
+        startLogoImg.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evitar que se abra/cierre el menú de inicio
+            handleSecretClick();
+        });
+
+        clockDisplay.addEventListener('click', () => {
+            handleSecretClick();
+        });
+
+        // Reiniciar desde BSOD
+        bsodRebootBtn.addEventListener('click', () => {
+            location.reload();
+        });
 
         // --- AUDIO HELPERS ---
         function playSound(audioElement) {
@@ -601,13 +726,11 @@
                 div.innerHTML = `<div class="icon-emoji">${project.icon}</div><span>${project.name}</span>`;
                 div.dataset.id = project.id;
                 
-                // Calcular posición inicial (cuadrícula) con más espacio
                 const col = Math.floor(index / 5);
                 const row = index % 5;
-                const defaultX = 130 + (col * 120); // Empezar en 130px para no chocar con config/papelera
-                const defaultY = 20 + (row * 110);  // 110px de separación vertical
+                const defaultX = 130 + (col * 120);
+                const defaultY = 20 + (row * 110);
 
-                // Cargar posición guardada
                 const savedPos = localStorage.getItem(`icon_pos_${project.id}`);
                 if (savedPos) {
                     const pos = JSON.parse(savedPos);
@@ -623,7 +746,6 @@
             });
         }
 
-        // Función para configurar eventos de icono (selección + arrastre)
         function setupIconEvents(element, projectData, isConfig = false, isTrash = false) {
             element.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
@@ -647,19 +769,15 @@
             });
         }
 
-        // Movimiento global para arrastre
         document.addEventListener('mousemove', (e) => {
             if (!isDraggingIcon || !draggedIcon) return;
-            
             const desktopRect = desktop.getBoundingClientRect();
             let newX = e.clientX - desktopRect.left - iconOffsetX;
             let newY = e.clientY - desktopRect.top - iconOffsetY;
-            
             if (newX < 0) newX = 0;
             if (newY < 0) newY = 0;
             if (newX > desktopRect.width - draggedIcon.offsetWidth) newX = desktopRect.width - draggedIcon.offsetWidth;
             if (newY > desktopRect.height - draggedIcon.offsetHeight) newY = desktopRect.height - draggedIcon.offsetHeight;
-
             draggedIcon.style.left = newX + 'px';
             draggedIcon.style.top = newY + 'px';
         });
