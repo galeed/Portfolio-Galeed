@@ -1,1185 +1,1063 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Quantum-TUI v7.8</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-primary:#0a0e14; --bg-secondary:#0d1117; --bg-panel:#11161d; --bg-hover:#1a2029;
-  --text-primary:#00ff9c; --text-secondary:#7ee787; 
-  --border-primary:#00ff9c; --border-glow:rgba(0,255,156,0.3);
-  --glow:0 0 8px var(--border-glow);
-  --text-muted:#6e7681; --text-dim:#484f58;
-  --accent-cyan:#39d0d8; --accent-magenta:#ff79c6; --accent-yellow:#ffd580;
-  --accent-red:#ff5555; --accent-orange:#ffb86c; --accent-purple:#bd93f9;
-  --border-dim:#30363d; 
-  --font-mono:'JetBrains Mono','Fira Code','Consolas',monospace;
-  --space-xs:4px; --space-sm:8px; --space-md:16px; --space-lg:24px; --space-xl:32px;
-  --transition:150ms ease;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { font-size: 14px; }
-body {
-  background: var(--bg-primary); color: var(--text-primary);
-  font-family: var(--font-mono); font-size: 1rem; line-height: 1.5;
-  min-height: 100vh; overflow: hidden;
-  -webkit-font-smoothing: antialiased; user-select: none;
-}
-#matrix { position: fixed; inset: 0; z-index: 0; opacity: .35; pointer-events: none; transition: opacity 0.3s; }
-body.lite-mode #matrix { opacity: 0.05; }
-body::before {
-  content:''; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 3px);
-  animation: scanline 8s linear infinite;
-}
-body.lite-mode::before, body.lite-mode::after { display: none; }
-@keyframes scanline { 0%{background-position:0 0} 100%{background-position:0 100px} }
-body::after {
-  content:''; position: fixed; inset: 0; pointer-events: none; z-index: 9997;
-  background: radial-gradient(ellipse at center, transparent 0%, transparent 55%, rgba(0,0,0,.65) 100%);
-}
-body.lite-mode .window { box-shadow: none !important; border-color: var(--text-muted) !important; }
-#desktop { position: fixed; inset: 0; z-index: 1; overflow: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moustache de Chat Lab - Win98 Style</title>
+    <style>
+        /* --- VARIABLES DE TEMA --- */
+        :root {
+            --bg-desktop: #6da2d8; --bg-taskbar: #f3c1d7; --bg-window: #c0c0c0;
+            --bg-window-content: #ffffff; --text-main: #000000; --text-light: #ffffff;
+            --text-title: #ffffff; --border-light: #ffffff; --border-dark: #808080;
+            --highlight: #000080; --font-main: 'MS Sans Serif', 'Pixelated', sans-serif;
+            --font-title: 'Arial Black', sans-serif; --window-radius: 0px;
+            --shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            --cursor-default: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M2,2 L2,18 L6,14 L10,22 L12,21 L8,13 L14,13 Z" fill="white" stroke="black" stroke-width="1"/></svg>'), auto;
+            --cursor-pointer: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10,2 L10,12 L12,10 L15,15 L17,14 L14,9 L18,9 Z" fill="white" stroke="black" stroke-width="1"/></svg>'), pointer;
+        }
 
-.glitch-anim { animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both; }
-@keyframes glitch {
-  0% { transform: translate(0); filter: hue-rotate(0deg); }
-  20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
-  40% { transform: translate(-2px, -2px); filter: hue-rotate(180deg); }
-  60% { transform: translate(2px, 2px); filter: hue-rotate(270deg); }
-  80% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
-  100% { transform: translate(0); filter: hue-rotate(0deg); }
-}
+        body.theme-tui {
+            --bg-desktop: #0a0a0a; --bg-taskbar: #111111; --bg-window: #1a1a1a;
+            --bg-window-content: #000000; --text-main: #33ff33; --text-light: #33ff33;
+            --text-title: #33ff33; --border-light: #33ff33; --border-dark: #004400;
+            --highlight: #33ff33; --font-main: 'Courier New', Courier, monospace;
+            --font-title: 'Courier New', Courier, monospace; --window-radius: 4px;
+            --shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+        }
 
-.window {
-  position: absolute; background: var(--bg-panel);
-  border: 1px solid var(--border-dim); border-radius: 6px;
-  box-shadow: var(--glow), 0 10px 40px rgba(0,0,0,.7), inset 0 0 60px rgba(0,255,156,.02);
-  display: flex; flex-direction: column;
-  min-width: 280px; min-height: 180px;
-  animation: windowIn 300ms ease-out; z-index: 10;
-  transition: left 250ms cubic-bezier(.2,.8,.2,1), top 250ms cubic-bezier(.2,.8,.2,1),
-              width 250ms cubic-bezier(.2,.8,.2,1), height 250ms cubic-bezier(.2,.8,.2,1);
-}
-.window.dragging, .window.resizing { transition: none; }
-.window.focused {
-  border-color: var(--border-primary);
-  box-shadow: 0 0 20px var(--border-glow), 0 10px 40px rgba(0,0,0,.8);
-  z-index: 100;
-}
-.window.minimized { display: none; }
-.window.maximized {
-  top: 20px !important; left: 20px !important;
-  width: calc(100vw - 40px) !important;
-  height: calc(100vh - 100px) !important;
-}
-@keyframes windowIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+        body.theme-distro {
+            --bg-desktop: #121212; --bg-taskbar: #1e1e1e; --bg-window: #2d2d2d;
+            --bg-window-content: #1e1e1e; --text-main: #e0e0e0; --text-light: #ffffff;
+            --text-title: #ffffff; --border-light: #444444; --border-dark: #111111;
+            --highlight: #00bcd4; --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-title: 'Segoe UI', sans-serif; --window-radius: 8px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
 
-.window-header {
-  display: flex; align-items: center; gap: var(--space-sm);
-  padding: 8px 12px; background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-dim);
-  border-radius: 6px 6px 0 0; font-size: .8rem; color: var(--text-muted);
-  cursor: grab; user-select: none;
-}
-.window-header:active { cursor: grabbing; }
-.window-dots { display: flex; gap: 6px; }
-.window-dots span {
-  width: 11px; height: 11px; border-radius: 50%;
-  background: var(--accent-red); box-shadow: 0 0 6px currentColor;
-  cursor: pointer; transition: var(--transition);
-}
-.window-dots span:hover { transform: scale(1.2); filter: brightness(1.4); }
-.window-dots span:nth-child(2) { background: var(--accent-yellow); }
-.window-dots span:nth-child(3) { background: var(--text-primary); }
-.window-title { flex: 1; text-align: center; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-.window-body { flex: 1; padding: var(--space-md); overflow-y: auto; font-size: .85rem; scrollbar-width: thin; scrollbar-color: var(--border-primary) var(--bg-secondary); user-select: text; }
-.resize-handle { position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--border-dim) 50%, var(--border-dim) 60%, transparent 60%, transparent 70%, var(--border-dim) 70%, var(--border-dim) 80%, transparent 80%); }
+        /* --- GENERAL --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-desktop); font-family: var(--font-main);
+            color: var(--text-main); height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: var(--cursor-default);
+        }
 
-#dock {
-  position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
-  background: rgba(13,17,23,.92); border: 1px solid var(--border-dim);
-  border-radius: 14px; padding: 8px 12px;
-  display: flex; gap: 8px; z-index: 5000; backdrop-filter: blur(14px);
-  box-shadow: 0 8px 32px rgba(0,0,0,.7), var(--glow);
-  align-items: center; 
-  max-width: calc(100vw - 24px);
-  overflow-x: auto; scrollbar-width: none;
-}
-#dock::-webkit-scrollbar { display: none; }
+        button, a, .project-icon, .start-item, .theme-btn, .tray-icon, input[type="checkbox"], .win-btn {
+            cursor: var(--cursor-pointer) !important;
+        }
 
-.dock-btn {
-  background: transparent; border: 1px solid var(--border-dim); color: var(--text-secondary);
-  border-radius: 10px; font-family: var(--font-mono); font-size: 1.25rem; cursor: pointer;
-  transition: all 200ms cubic-bezier(.34,1.56,.64,1);
-  display: flex; align-items: center; justify-content: center;
-  width: 46px; height: 46px; position: relative; flex-shrink: 0;
-}
-.dock-btn:hover { color: var(--text-primary); border-color: var(--border-primary); box-shadow: 0 0 14px var(--border-glow); transform: translateY(-6px) scale(1.08); }
-.dock-btn.active { color: var(--bg-primary); background: var(--text-primary); border-color: var(--text-primary); }
-.dock-btn::after {
-  content: attr(data-label); position: absolute; bottom: calc(100% + 10px); left: 50%;
-  transform: translateX(-50%) translateY(4px); background: var(--bg-panel); color: var(--text-primary);
-  border: 1px solid var(--border-primary); padding: 3px 10px; border-radius: 4px;
-  font-size: .68rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 180ms ease; box-shadow: var(--glow);
-}
-.dock-btn:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
-.dock-sep { width: 1px; height: 32px; background: var(--border-dim); margin: 0 4px; flex-shrink: 0; }
-#windowCounter { color: var(--text-muted); font-size: .7rem; padding: 0 6px; align-self: center; font-weight: 700; flex-shrink: 0; }
+        /* Efecto CRT para el tema TUI */
+        body.theme-tui::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9998;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
 
-.dock-menu-wrap { position: relative; flex-shrink: 0; }
-.dock-menu {
-  position: fixed; bottom: 80px; right: 20px;
-  background: var(--bg-panel); border: 1px solid var(--border-primary);
-  border-radius: 8px; padding: 6px; min-width: 190px;
-  box-shadow: 0 0 30px var(--border-glow), 0 10px 40px rgba(0,0,0,.8);
-  opacity: 0; transform: translateY(8px) scale(0.98); pointer-events: none; transition: all 200ms cubic-bezier(.34,1.56,.64,1);
-  backdrop-filter: blur(14px); z-index: 6000;
-  max-height: 70vh; overflow-y: auto;
-}
-.dock-menu.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-.dock-menu-item {
-  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
-  color: var(--text-secondary); border-radius: 5px; font-family: var(--font-mono);
-  font-size: .82rem; cursor: pointer; transition: all 120ms ease; border: none; background: transparent; width: 100%; text-align: left;
-}
-.dock-menu-item:hover { background: var(--bg-hover); color: var(--text-primary); }
-.dock-menu-item .mi-icon { font-size: 1rem; width: 20px; text-align: center; }
-.dock-menu-divider { height: 1px; background: var(--border-dim); margin: 4px 0; }
+        @keyframes flicker { 0% { opacity: 0.95; } 50% { opacity: 1; } 100% { opacity: 0.95; } }
 
-.swatch { width: 22px; height: 22px; border: 2px solid transparent; border-radius: 3px; transition: var(--transition); cursor: pointer; position: relative; display:inline-block;}
-.swatch:hover { transform: scale(1.15); border-color: #fff; }
-.swatch.active { border-color: #fff; box-shadow: 0 0 10px #fff; }
+        /* --- PANTALLA AZUL (BSOD) --- */
+        #bsod-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0000AA; color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 99999; display: none; flex-direction: column; padding: 40px;
+            font-size: 16px; line-height: 1.4;
+        }
+        #bsod-screen.active { display: flex; }
+        .bsod-header {
+            background-color: #C0C0C0; color: #0000AA; padding: 2px 8px;
+            font-weight: bold; display: inline-block; align-self: flex-start; margin-bottom: 20px;
+        }
+        .bsod-content { max-width: 800px; }
+        .bsod-content p { margin-bottom: 15px; }
+        .bsod-content strong { color: #ffffff; }
+        .bsod-prompt { margin-top: 30px; font-weight: bold; }
+        .bsod-blinking { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-.piano-key { background: var(--bg-secondary); border: 1px solid var(--border-dim); border-radius: 0 0 5px 5px; cursor: pointer; transition: all 0.1s; position: relative; }
-.piano-key:hover { background: var(--bg-hover); border-color: var(--text-primary); }
-.piano-key.active { background: var(--text-primary); color: var(--bg-primary); transform: scale(0.95); box-shadow: 0 0 15px var(--border-glow); }
+        /* --- SPLASH --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; transition: opacity 0.8s ease-out;
+        }
+        #splash-screen.fade-out { opacity: 0; pointer-events: none; }
+        #splash-screen.hidden { display: none !important; }
+        .splash-logo { font-family: var(--font-title); font-size: 3rem; color: #fff; text-shadow: 3px 3px 0px #d48fb3; margin-bottom: 20px; letter-spacing: -2px; }
+        .splash-subtitle { font-size: 1.2rem; margin-bottom: 40px; color: #ccc; }
+        .loading-bar-container { width: 300px; height: 20px; border: 2px solid #fff; padding: 2px; background-color: #000; display: flex; gap: 2px; }
+        .loading-block { width: 20px; height: 100%; background-color: #000080; opacity: 0; animation: loadBlock 1.5s infinite; }
+        .loading-block.paused { animation: none !important; opacity: 1; }
+        @keyframes loadBlock { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        .splash-options { margin-top: 30px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ccc; }
+        #skip-splash-btn { margin-top: 20px; background-color: #c0c0c0; border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080; padding: 8px 20px; font-weight: bold; cursor: pointer; font-size: 14px; font-family: sans-serif; }
 
-.hack-input, .app-input { background: var(--bg-secondary); border: 1px solid var(--border-dim); outline: none; color: var(--text-primary); font-family: var(--font-mono); font-size: 1rem; padding: 10px; width: 100%; border-radius: 4px; margin-bottom: 10px; transition: border 0.2s;}
-.hack-input:focus, .app-input:focus { border-color: var(--text-primary); box-shadow: var(--glow); }
-.hack-input { font-size: 1.2rem; text-align: center; letter-spacing: 5px; }
-.app-btn { background: var(--text-primary); color: var(--bg-primary); border: none; padding: 10px 15px; font-family: var(--font-mono); font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-bottom: 10px; transition: all 0.2s;}
-.app-btn:hover { box-shadow: 0 0 15px var(--border-glow); transform: scale(1.02); }
+        /* --- ESCRITORIO --- */
+        .desktop { flex-grow: 1; padding: 20px; position: relative; z-index: 1; }
+        .project-icon {
+            position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: grab; color: var(--text-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            text-decoration: none; padding: 5px; width: 100px;
+            border: 1px dotted transparent; user-select: none; transition: background 0.1s;
+        }
+        .project-icon:active { cursor: grabbing; }
+        .project-icon.selected { background-color: var(--highlight); border: 1px dotted var(--border-light); color: var(--bg-window-content); }
+        .project-icon span { font-size: 12px; line-height: 1.1; word-wrap: break-word; word-break: break-word; width: 100%; display: block; }
+        .icon-emoji { font-size: 40px; line-height: 1; margin-bottom: 5px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5)); pointer-events: none; }
 
-body.mobile-mode { overflow: auto; }
-body.mobile-mode #desktop { position: relative; overflow: visible; padding: 16px 16px 110px; display: flex; flex-direction: column; gap: 16px; min-height: 100vh; }
-body.mobile-mode .window { position: relative !important; left: auto !important; top: auto !important; width: 100% !important; height: auto !important; min-height: 0; transform: none !important; animation: none; margin-bottom: 10px;}
-body.mobile-mode .window.maximized { position: relative !important; width: 100% !important; height: auto !important; top: auto !important; left: auto !important; }
-body.mobile-mode .window .resize-handle { display: none; }
-body.mobile-mode .window-body { max-height: none; overflow: visible; }
-body.mobile-mode #dock { 
-  bottom: 8px; padding: 6px 8px; gap: 4px; border-radius: 16px; 
-  max-width: calc(100vw - 16px); justify-content: flex-start;
-}
-body.mobile-mode .dock-btn { width: 40px; height: 40px; font-size: 1.1rem; border-radius: 8px; }
+        .watermark-logo { position: absolute; bottom: 60px; right: 30px; text-align: right; pointer-events: none; z-index: 0; opacity: 0.6; }
+        .watermark-logo h1 { color: var(--text-light); font-size: 2rem; text-shadow: 3px 3px 0px var(--highlight); font-family: var(--font-title); line-height: 0.9; letter-spacing: -1px; }
+        .watermark-logo span { font-size: 0.8rem; display: block; color: var(--text-light); }
 
-.dpad { display: none; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 150px; margin: 15px auto 0; }
-body.mobile-mode .game-window .dpad { display: grid; }
-.dpad-btn { background: var(--bg-panel); border: 1px solid var(--border-primary); color: var(--text-primary); padding: 15px; border-radius: 5px; text-align: center; font-size: 1.2rem; cursor: pointer; user-select: none; }
-.dpad-btn:active { background: var(--text-primary); color: var(--bg-primary); }
-.dpad-empty { visibility: hidden; }
+        /* --- BARRA DE TAREAS --- */
+        .taskbar {
+            height: 40px; background-color: var(--bg-taskbar);
+            border-top: 2px solid var(--border-light); border-bottom: 2px solid var(--border-dark);
+            display: flex; align-items: center; padding: 0 5px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2); z-index: 100; position: relative;
+            transition: background-color 0.3s;
+        }
+        .start-btn {
+            background-color: var(--bg-window); border: 1px solid var(--border-dark);
+            border-top-color: var(--border-light); border-left-color: var(--border-light);
+            padding: 5px 10px; font-weight: bold; font-size: 12px;
+            display: flex; align-items: center; gap: 5px; cursor: pointer;
+            height: 30px; color: var(--text-main);
+            box-shadow: inset 1px 1px 0px var(--border-light);
+            position: relative; z-index: 101; border-radius: var(--window-radius);
+        }
+        .start-btn:active, .start-btn.open {
+            border-top-color: var(--border-dark); border-left-color: var(--border-dark);
+            border-bottom-color: var(--border-light); border-right-color: var(--border-light);
+            padding: 6px 9px 4px 11px; 
+        }
+        .start-btn img { width: 16px; height: 16px; }
+        .theme-tui .start-btn img { display: none; }
 
-#bootScreen { position: fixed; inset: 0; background: #000; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-primary); font-family: var(--font-mono); padding: var(--space-lg); transition: opacity 600ms ease; }
-#bootScreen.fade-out { opacity: 0; pointer-events: none; }
-.boot-logo { font-size: clamp(6px,1vw,12px); white-space: pre; line-height: 1.1; text-shadow: var(--glow); margin-bottom: var(--space-lg); color: var(--text-primary); }
-.boot-line { margin-bottom: 4px; opacity: 0; animation: bootLine 200ms forwards; }
-@keyframes bootLine { to{opacity:1} }
+        .divider { width: 2px; height: 20px; background: var(--border-dark); border-right: 1px solid var(--border-light); margin: 0 10px; }
+        .system-tray { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-main); padding-right: 5px; }
+        .tray-icon { cursor: pointer; font-size: 14px; user-select: none; }
+        #clock { cursor: help; }
 
-/* NUEVO: estilos para drum machine */
-.drum-cell { height: 22px; cursor: pointer; border-radius: 2px; transition: background 100ms; }
-.drum-cell.on { background: var(--text-primary) !important; box-shadow: 0 0 8px var(--border-glow); }
-.drum-cell.playing { outline: 1px solid var(--accent-yellow); }
-</style>
+        /* --- MENÚ DE INICIO --- */
+        .start-menu {
+            position: absolute; bottom: 40px; left: 5px; width: 250px;
+            background-color: var(--bg-window); border: 2px solid var(--border-light);
+            border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            box-shadow: var(--shadow); display: none; flex-direction: column; z-index: 99;
+            border-radius: var(--window-radius); overflow: hidden;
+        }
+        .start-menu.open { display: flex; }
+        .start-menu-header {
+            background: var(--highlight); color: var(--text-light);
+            padding: 10px; font-weight: bold; font-size: 18px;
+            writing-mode: vertical-lr; transform: rotate(180deg);
+            position: absolute; left: 0; top: 0; bottom: 0; width: 30px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .start-menu-list { margin-left: 30px; display: flex; flex-direction: column; padding: 2px; }
+        .start-item {
+            display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+            font-size: 12px; color: var(--text-main); text-decoration: none; cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .start-item:hover { background-color: var(--highlight); color: var(--text-light); }
+        .start-item .icon-emoji { font-size: 24px; margin-bottom: 0; filter: none; }
+
+        /* --- VENTANAS --- */
+        .window-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 400px; height: auto; /* Altura automática por defecto */
+            background-color: var(--bg-window);
+            border: 2px solid var(--border-light); 
+            border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            box-shadow: var(--shadow); display: none; flex-direction: column; z-index: 1000;
+            border-radius: var(--window-radius); overflow: hidden;
+            transition: width 0.2s, height 0.2s, top 0.2s, left 0.2s, transform 0.2s;
+        }
+        .window-modal.active { display: flex; }
+        
+        /* Estado Maximizado */
+        .window-modal.maximized {
+            top: 0 !important;
+            left: 0 !important;
+            transform: none !important;
+            width: 100vw !important;
+            height: calc(100vh - 40px) !important; /* Restar la barra de tareas */
+            border-radius: 0;
+            border: none;
+        }
+
+        .window-header {
+            background: var(--highlight); color: var(--text-title);
+            padding: 3px 5px; display: flex; justify-content: space-between; align-items: center;
+            font-weight: bold; font-size: 12px; cursor: move; user-select: none;
+            height: 24px; /* Altura fija para la cabecera */
+        }
+        .window-title { display: flex; align-items: center; gap: 5px; padding-left: 2px; }
+        .window-controls { display: flex; gap: 2px; }
+        .win-btn {
+            width: 16px; height: 14px; background-color: var(--bg-window);
+            border: 1px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 10px; font-weight: bold; cursor: pointer; color: var(--text-main);
+            line-height: 1;
+        }
+        .win-btn:active { border: 1px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light); }
+
+        .window-content {
+            padding: 20px; background-color: var(--bg-window-content); margin: 2px;
+            border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light);
+            display: flex; flex-direction: column; gap: 15px;
+            flex-grow: 1; /* Para que ocupe el espacio disponible cuando esté maximizada */
+            overflow-y: auto; /* Scroll si hay mucho contenido */
+        }
+        .window-content h2 { font-size: 18px; color: var(--highlight); margin-bottom: 5px; }
+        .window-content p { font-size: 14px; line-height: 1.4; }
+
+        .action-btn {
+            background-color: var(--bg-window); border: 2px solid var(--border-light);
+            border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            padding: 8px 15px; font-weight: bold; font-size: 14px;
+            cursor: pointer; text-align: center; text-decoration: none; color: var(--text-main);
+            display: inline-block; margin-top: 10px; align-self: flex-start;
+        }
+        .action-btn:active { border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light); padding: 9px 14px 7px 16px; }
+
+        /* Configuración */
+        .config-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+        .config-group label { font-size: 12px; font-weight: bold; color: var(--text-main); }
+        .config-group input[type="text"] {
+            padding: 4px; border: 2px solid var(--border-dark); border-right-color: var(--border-light); border-bottom-color: var(--border-light);
+            font-family: var(--font-main); font-size: 14px; background: var(--bg-window-content); color: var(--text-main);
+        }
+        .config-toggle { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .config-toggle span { font-size: 12px; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border-dark); border: 2px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px;
+            background-color: var(--bg-window); border: 1px solid var(--text-main); transition: .4s;
+        }
+        input:checked + .slider { background-color: var(--highlight); }
+        input:checked + .slider:before { transform: translateX(18px); }
+        .theme-selector { display: flex; gap: 5px; margin-top: 5px; }
+        .theme-btn {
+            flex: 1; padding: 8px; border: 2px solid var(--border-dark); 
+            border-right-color: var(--border-light); border-bottom-color: var(--border-light);
+            background: var(--bg-window); cursor: pointer; font-family: var(--font-main);
+            font-size: 11px; color: var(--text-main); text-align: center;
+        }
+        .theme-btn.active {
+            border: 2px solid var(--border-light); border-right-color: var(--border-dark); border-bottom-color: var(--border-dark);
+            background: var(--highlight); color: var(--text-light);
+        }
+
+        /* Modal de Reinicio */
+        #restart-modal { width: 320px; z-index: 2000; }
+        #restart-modal .window-content { padding: 15px; gap: 10px; }
+        #restart-modal .action-btn { margin-top: 5px; align-self: stretch; text-align: center; }
+        #restart-modal .buttons-row { display: flex; gap: 10px; margin-top: 10px; }
+        #restart-modal .buttons-row .action-btn { flex: 1; }
+
+        /* Ventana de Papelera */
+        #trash-window { width: 350px; }
+        #trash-window .window-content { min-height: 150px; align-items: center; justify-content: center; text-align: center; color: var(--text-main); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 999; }
+        .overlay.active { display: block; }
+        #overlay-restart { background: rgba(0,0,0,0.5); z-index: 1999; }
+
+        .toast {
+            position: fixed; bottom: 60px; right: 20px;
+            background-color: var(--bg-window); border: 1px solid var(--border-dark); padding: 10px 15px;
+            font-size: 12px; box-shadow: var(--shadow);
+            z-index: 2001; display: none; opacity: 0; transition: opacity 0.3s;
+            color: var(--text-main);
+        }
+        .toast.show { display: block; opacity: 1; }
+        .hidden { display: none !important; }
+
+    </style>
 </head>
-<body>
+<body class="theme-win98">
 
-<canvas id="matrix"></canvas>
-<div id="desktop"></div>
-
-<div id="dock">
-  <button class="dock-btn" data-open="system" data-label="Inicio">🖥</button>
-  <button class="dock-btn" data-open="shell" data-label="Consola">❯</button>
-  <button class="dock-btn" data-open="music" data-label="Música">🎵</button>
-  <button class="dock-btn dock-toggle" id="modeToggle" data-label="Móvil/PC">📱</button>
-  <button class="dock-btn" id="liteToggle" data-label="Modo Lite">🔋</button>
-  <div class="dock-sep"></div>
-  <span id="windowCounter">0/4</span>
-  <div class="dock-menu-wrap">
-    <button class="dock-btn" id="menuToggle" data-label="Más">⋯</button>
-    <div class="dock-menu" id="dockMenu">
-      <button class="dock-menu-item" data-open="about"><span class="mi-icon">📄</span><span>About</span></button>
-      <button class="dock-menu-item" data-open="skills"><span class="mi-icon">⚡</span><span>Skills</span></button>
-      <button class="dock-menu-item" data-open="collabs"><span class="mi-icon">🤝</span><span>Collabs</span></button>
-      <div class="dock-menu-divider"></div>
-      <button class="dock-menu-item" data-open="files"><span class="mi-icon">📁</span><span>Proyectos</span></button>
-      <button class="dock-menu-item" data-open="piano"><span class="mi-icon">🎹</span><span>Piano</span></button>
-      <button class="dock-menu-item" data-open="drum"><span class="mi-icon">🥁</span><span>Drum Machine</span></button>
-      <button class="dock-menu-item" data-open="morse"><span class="mi-icon">📡</span><span>Morse</span></button>
-      <button class="dock-menu-item" data-open="generator"><span class="mi-icon">🔐</span><span>Generador Pass</span></button>
-      <div class="dock-menu-divider"></div>
-      <button class="dock-menu-item" data-open="snake"><span class="mi-icon">🐍</span><span>Snake</span></button>
-      <button class="dock-menu-item" data-open="tetris"><span class="mi-icon">🧱</span><span>Tetris</span></button>
-      <button class="dock-menu-item" data-open="2048"><span class="mi-icon">🔢</span><span>2048</span></button>
-      <button class="dock-menu-item" data-open="hack"><span class="mi-icon">💻</span><span>Hackeo</span></button>
-      <div class="dock-menu-divider"></div>
-      <button class="dock-menu-item" id="helpMenuItem"><span class="mi-icon">❔</span><span>Ayuda</span></button>
+    <!-- PANTALLA AZUL DE LA MUERTE (BSOD) -->
+    <div id="bsod-screen">
+        <div class="bsod-header">MOUSTACHE_OS</div>
+        <div class="bsod-content">
+            <p>Se ha producido un error fatal en <strong>0x000000M1CH1</strong> (MOUSTACHE_EXCEPTION_NOT_HANDLED)</p>
+            <p>El sistema ha detectado un exceso de <em>Michi</em> en el buffer de audio. Los bigotes han colapsado el kernel.</p>
+            <p>Si este es el primer error, reinicia el sistema. Si vuelve a ocurrir, contacta con el administrador de la colonia felina.</p>
+            <p>* Presiona cualquier tecla o haz clic en el botón de abajo para reiniciar.</p>
+            <p class="bsod-prompt">Presiona cualquier tecla para continuar <span class="bsod-blinking">_</span></p>
+            <button class="action-btn" id="bsod-reboot-btn" style="background-color: #C0C0C0; color: #0000AA; border-color: #fff #808080 #808080 #fff; font-family: 'Courier New', Courier, monospace; margin-top: 20px;">Reiniciar Sistema</button>
+        </div>
     </div>
-  </div>
-</div>
 
-<div class="help-overlay" id="helpOverlay" style="position:fixed;inset:0;background:rgba(10,14,20,.92);backdrop-filter:blur(4px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--bg-panel);border:1px solid var(--border-primary);border-radius:6px;padding:20px;max-width:600px;width:100%;box-shadow:0 0 40px var(--border-glow);">
-    <h2 style="color:var(--accent-yellow);margin-bottom:15px;">❯ COMANDOS DE TECLADO (Hyprland Style)</h2>
-    <div style="display:grid;grid-template-columns:120px 1fr;gap:10px;font-size:0.9rem;">
-      <span style="color:var(--accent-cyan);font-weight:bold;">Alt + Q</span><span>Cerrar ventana enfocada</span>
-      <span style="color:var(--accent-cyan);font-weight:bold;">Alt + 1..4</span><span>Enfocar ventana (1 a 4)</span>
-      <span style="color:var(--accent-cyan);font-weight:bold;">Alt + K</span><span>Abrir Shell</span>
-      <span style="color:var(--accent-cyan);font-weight:bold;">Alt + M</span><span>Móvil / PC</span>
-      <span style="color:var(--accent-cyan);font-weight:bold;">Tab (Shell)</span><span>Auto-completar comandos</span>
-      <span style="color:var(--accent-cyan);font-weight:bold;">Flechas</span><span>Mover en juegos enfocados</span>
+    <!-- PANTALLA DE INICIO -->
+    <div id="splash-screen">
+        <div class="splash-logo">Moustache</div>
+        <div class="splash-subtitle">de Chat Lab</div>
+        <div class="loading-bar-container" id="loading-bar"></div>
+        <div class="splash-options">
+            <input type="checkbox" id="hide-splash-checkbox">
+            <label for="hide-splash-checkbox">No mostrar de nuevo al iniciar</label>
+        </div>
+        <button id="skip-splash-btn">Saltar Inicio</button>
     </div>
-    <button onclick="closeHelp()" style="margin-top:20px;background:var(--text-primary);color:var(--bg-primary);border:none;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:bold;">Cerrar</button>
-  </div>
-</div>
 
-<div class="toast" id="toast" style="position:fixed;bottom:90px;right:24px;background:var(--bg-panel);border:1px solid var(--border-primary);color:var(--text-primary);padding:8px 16px;border-radius:4px;font-size:.8rem;box-shadow:var(--glow);z-index:10001;opacity:0;transform:translateY(10px);transition:all 300ms ease;pointer-events:none;"></div>
+    <!-- ZONA DE ESCRITORIO -->
+    <main class="desktop" id="desktop"></main>
 
-<div id="bootScreen">
-  <pre class="boot-logo">
- __  __ _____  ______          _ 
-|  \/  |  ___|/ __ \ \        / /
-| |\/| | |__ | |  | \ \  /\  / / 
-| |  | |  __|| |  | |\ \/  \/ /  
-| |  | | |___| |__| | \  /\  /   
-|_|  |_|_____|\____/   \/  \/    
-  </pre>
-  <div id="bootLines" style="font-size:.8rem;color:var(--text-secondary);max-width:600px;width:100%;"></div>
-</div>
-
-<script>
-// =====================================================================
-// UTILIDADES DE COLOR (fix crítico para canvas)
-// =====================================================================
-function cssVar(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#00ff9c';
-}
-
-const State = {
-  audioCtx: null, soundEnabled: true, zIndex: 10, windows: {},
-  drum: { grid: Array.from({ length: 4 }, () => Array(16).fill(false)), playing: false, currentStep: 0, bpm: 120, timer: null },
-  focusedWindowId: null
-};
-
-const MAX_WINDOWS = 4;
-const TILE_GAP = 10;
-const DOCK_RESERVED = 90;
-
-const PALETTES = {
-  '#00ff9c': { name: 'Green',  secondary: '#7ee787' },
-  '#7ee787': { name: 'Lime',   secondary: '#a7f3d0' },
-  '#39d0d8': { name: 'Cyan',   secondary: '#7dd3fc' },
-  '#ff79c6': { name: 'Pink',   secondary: '#fbcfe8' },
-  '#ffd580': { name: 'Yellow', secondary: '#fef08a' },
-  '#ffb86c': { name: 'Orange', secondary: '#fdba74' },
-  '#ff5555': { name: 'Red',    secondary: '#fca5a5' },
-};
-
-function getAudioCtx() {
-  if (!State.audioCtx) State.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (State.audioCtx.state === 'suspended') State.audioCtx.resume();
-  return State.audioCtx;
-}
-function playKeySound() {
-  if (!State.soundEnabled) return;
-  try {
-    const ctx = getAudioCtx(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.type = 'square'; osc.frequency.value = 800 + Math.random() * 400;
-    gain.gain.setValueAtTime(0.015, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.05);
-  } catch (e) {}
-}
-function playBeep(freq = 880, duration = 0.1, type = 'sine', vol = 0.05) {
-  if (!State.soundEnabled) return;
-  try {
-    const ctx = getAudioCtx(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.type = type; osc.frequency.value = freq;
-    gain.gain.setValueAtTime(vol, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + duration);
-  } catch (e) {}
-}
-function playNote(freq) {
-  if (!State.soundEnabled) return;
-  try {
-    const ctx = getAudioCtx(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.type = 'triangle'; osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.4);
-  } catch(e) {}
-}
-
-// =====================================================================
-// MATRIX (con fix de colores)
-// =====================================================================
-function initMatrix() {
-  const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
-  let width, height, columns, drops;
-  const chars = 'アイウエオカキクケコ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; const fontSize = 14;
-  function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; columns = Math.floor(width / fontSize); drops = Array(columns).fill(1); }
-  resize(); window.addEventListener('resize', resize);
-  function draw() {
-    ctx.fillStyle = 'rgba(10,14,20,0.08)'; ctx.fillRect(0, 0, width, height);
-    ctx.font = fontSize + 'px monospace';
-    const primaryColor = cssVar('--text-primary');  // ← FIX
-    for (let i = 0; i < drops.length; i++) {
-      const char = chars[Math.floor(Math.random() * chars.length)];
-      const x = i * fontSize; const y = drops[i] * fontSize; const r = Math.random();
-      if (r > 0.98) { ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 10; ctx.shadowColor = primaryColor; }
-      else if (r > 0.9) { ctx.fillStyle = primaryColor; ctx.shadowBlur = 4; ctx.shadowColor = primaryColor; }
-      else { ctx.fillStyle = primaryColor; ctx.globalAlpha = 0.75; ctx.shadowBlur = 0; }
-      ctx.fillText(char, x, y); ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-      if (y > height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
-    }
-  }
-  setInterval(draw, 50);
-}
-
-function applyTheme(color) {
-  const theme = PALETTES[color] || PALETTES['#00ff9c'];
-  const root = document.documentElement;
-  root.style.setProperty('--text-primary', color);
-  root.style.setProperty('--border-primary', color);
-  root.style.setProperty('--text-secondary', theme.secondary);
-  const r = parseInt(color.slice(1,3), 16), g = parseInt(color.slice(3,5), 16), b = parseInt(color.slice(5,7), 16);
-  root.style.setProperty('--border-glow', `rgba(${r},${g},${b},0.3)`);
-  document.body.classList.remove('glitch-anim'); void document.body.offsetWidth; document.body.classList.add('glitch-anim');
-  document.querySelectorAll('.swatch').forEach(sw => sw.classList.toggle('active', sw.dataset.color === color));
-  localStorage.setItem('tui-theme', color);
-  playBeep(800, 0.05);
-}
-
-function toggleLiteMode() {
-  document.body.classList.toggle('lite-mode');
-  const isLite = document.body.classList.contains('lite-mode');
-  localStorage.setItem('tui-lite', isLite);
-  document.getElementById('liteToggle').classList.toggle('active', isLite);
-  toast(isLite ? '🔋 Modo Lite Activado' : '⚡ Modo Lite Desactivado');
-}
-
-let toastTimer;
-function toast(msg, isError = false) {
-  const el = document.getElementById('toast'); clearTimeout(toastTimer);
-  el.textContent = msg; el.style.borderColor = isError ? 'var(--accent-red)' : 'var(--border-primary)';
-  el.style.color = isError ? 'var(--accent-red)' : 'var(--text-primary)';
-  el.style.opacity = 1; el.style.transform = 'translateY(0)';
-  toastTimer = setTimeout(() => { el.style.opacity = 0; el.style.transform = 'translateY(10px)'; }, 2400);
-}
-
-function getTileRects(count) {
-  const w = window.innerWidth, h = window.innerHeight - DOCK_RESERVED, g = TILE_GAP;
-  if (count === 1) return [{ left: g, top: g, width: w - g * 2, height: h - g * 2 }];
-  if (count === 2) { const half = (w - g * 3) / 2; return [{ left: g, top: g, width: half, height: h - g * 2 }, { left: g * 2 + half, top: g, width: half, height: h - g * 2 }]; }
-  if (count === 3) {
-    const masterW = (w - g * 3) * 0.6, stackW = w - g * 3 - masterW, stackH = (h - g * 3) / 2;
-    return [{ left: g, top: g, width: masterW, height: h - g * 2 }, { left: g * 2 + masterW, top: g, width: stackW, height: stackH }, { left: g * 2 + masterW, top: g * 2 + stackH, width: stackW, height: stackH }];
-  }
-  const halfW = (w - g * 3) / 2, halfH = (h - g * 3) / 2;
-  return [{ left: g, top: g, width: halfW, height: halfH }, { left: g * 2 + halfW, top: g, width: halfW, height: halfH }, { left: g, top: g * 2 + halfH, width: halfW, height: halfH }, { left: g * 2 + halfW, top: g * 2 + halfH, width: halfW, height: halfH }];
-}
-
-function retileWindows() {
-  if (document.body.classList.contains('mobile-mode')) return;
-  const ids = Object.keys(State.windows).filter(id => !State.windows[id].classList.contains('minimized') && !State.windows[id].classList.contains('maximized'));
-  const rects = getTileRects(ids.length);
-  ids.forEach((id, i) => {
-    const win = State.windows[id]; const r = rects[i]; if (!r) return;
-    win.classList.add('snapping');
-    win.style.left = r.left + 'px'; win.style.top = r.top + 'px'; win.style.width = r.width + 'px'; win.style.height = r.height + 'px';
-    setTimeout(() => win.classList.remove('snapping'), 260);
-  });
-}
-window.addEventListener('resize', () => { clearTimeout(window._tileTimer); window._tileTimer = setTimeout(retileWindows, 150); });
-
-function updateDockState() {
-  document.querySelectorAll('[data-open]').forEach(btn => btn.classList.toggle('active', !!State.windows[btn.dataset.open]));
-  const count = Object.keys(State.windows).filter(id => !State.windows[id].classList.contains('minimized')).length;
-  const c = document.getElementById('windowCounter'); c.textContent = `${count}/${MAX_WINDOWS}`; c.style.color = count >= MAX_WINDOWS ? 'var(--accent-red)' : 'var(--text-muted)';
-}
-
-function bringToFront(id) {
-  Object.values(State.windows).forEach(w => w.classList.remove('focused'));
-  if (State.windows[id]) {
-    State.windows[id].style.zIndex = ++State.zIndex;
-    State.windows[id].classList.add('focused');
-    State.focusedWindowId = id;
-    if (State.windows[id].classList.contains('minimized')) { State.windows[id].classList.remove('minimized'); retileWindows(); }
-  }
-  updateDockState();
-}
-
-function closeWindow(id) {
-  if (!State.windows[id]) return;
-  if (State.windows[id]._cleanup) State.windows[id]._cleanup();
-  State.windows[id].remove(); delete State.windows[id]; updateDockState(); playBeep(440, 0.05); retileWindows();
-  const remaining = Object.keys(State.windows);
-  if (remaining.length > 0) bringToFront(remaining[remaining.length - 1]);
-}
-
-// FIX: listeners globales con reference para poder eliminarlos
-function createWindow({ id, title, body = '', footer = '', className = '' }) {
-  if (State.windows[id]) { bringToFront(id); return State.windows[id]; }
-  const visibleCount = Object.values(State.windows).filter(w => !w.classList.contains('minimized')).length;
-  if (visibleCount >= MAX_WINDOWS) { toast(`⚠ Máximo ${MAX_WINDOWS} ventanas`, true); playBeep(220, 0.15, 'square'); return null; }
-
-  const win = document.createElement('div');
-  win.className = 'window ' + className; win.id = 'win-' + id; win.style.zIndex = ++State.zIndex;
-  win.innerHTML = `
-    <div class="window-header">
-      <div class="window-dots"><span data-act="close"></span><span data-act="minimize"></span><span data-act="maximize"></span></div>
-      <div class="window-title">${title}</div>
+    <!-- LOGO FLOTANTE -->
+    <div class="watermark-logo">
+        <h1>Moustache</h1>
+        <span>de Chat Lab</span>
     </div>
-    <div class="window-body">${body}</div>
-    ${footer}
-    <div class="resize-handle"></div>`;
-  document.getElementById('desktop').appendChild(win);
-  State.windows[id] = win;
 
-  win.addEventListener('mousedown', () => bringToFront(id));
+    <!-- MENÚ DE INICIO -->
+    <div class="start-menu" id="start-menu">
+        <div class="start-menu-header">Moustache</div>
+        <div class="start-menu-list" id="start-menu-list"></div>
+    </div>
 
-  let isDragging = false, startX, startY, startLeft, startTop;
-  const onMove = (e) => {
-    if (!isDragging) return;
-    win.style.left = Math.max(-50, Math.min(window.innerWidth - 100, startLeft + (e.clientX - startX))) + 'px';
-    win.style.top = Math.max(0, Math.min(window.innerHeight - 60, startTop + (e.clientY - startY))) + 'px';
-  };
-  const onUp = () => { isDragging = false; win.classList.remove('dragging'); };
-
-  win.querySelector('.window-header').addEventListener('mousedown', (e) => {
-    if (e.target.closest('.window-dots') || document.body.classList.contains('mobile-mode')) return;
-    isDragging = true; startX = e.clientX; startY = e.clientY; startLeft = win.offsetLeft; startTop = win.offsetTop;
-    win.classList.add('dragging'); win.classList.remove('maximized'); bringToFront(id); e.preventDefault();
-  });
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onUp);
-
-  win.querySelectorAll('.window-dots span').forEach(dot => {
-    dot.addEventListener('click', (e) => {
-      e.stopPropagation(); const act = dot.dataset.act;
-      if (act === 'close') closeWindow(id);
-      else if (act === 'minimize') { win.classList.toggle('minimized'); retileWindows(); updateDockState(); }
-      else if (act === 'maximize') {
-        win.classList.toggle('maximized');
-        retileWindows(); // FIX: re-tilear al maximizar/restaurar
-        updateDockState();
-      }
-    });
-  });
-
-  // FIX: limpiar listeners de drag al cerrar
-  const baseCleanup = win._cleanup;
-  win._cleanup = () => {
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onUp);
-    if (baseCleanup) baseCleanup();
-  };
-
-  requestAnimationFrame(() => retileWindows());
-  updateDockState();
-  bringToFront(id);
-  return win;
-}
-
-// =====================================================================
-// BUILDERS
-// =====================================================================
-const BUILDERS = {
-  system: () => {
-    const body = `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">SYSTEM INFO v2.4</h2>
-      <pre style="color:var(--accent-magenta);margin:15px 0;font-size:0.7rem;">
- __  __ _____  ______          _ 
-|  \\/  |  ___|/ __ \\ \\        / /
-| |\\/| | |__ | |  | \\ \\  /\\  / / 
-| |  | |  __|| |  | |\\ \\/  \\/ /  
-| |  | | |___| |__| | \\  /\\  /   
-|_|  |_|_____|\\____/   \\/  \\/    </pre>
-      <div style="background:var(--bg-secondary);padding:15px;border-left:3px solid var(--border-primary);border-radius:4px;">
-        <div style="display:grid;grid-template-columns:80px 1fr;gap:5px;font-size:0.8rem;">
-          <span style="color:var(--accent-cyan);">OS:</span><span>Arch Linux x86_64</span>
-          <span style="color:var(--accent-cyan);">Shell:</span><span>zsh 5.9</span>
-          <span style="color:var(--accent-cyan);">WM:</span><span>Hyprland / i3-gaps</span>
-          <span style="color:var(--accent-cyan);">CPU:</span><span>Apple M3 Max</span>
+    <!-- BARRA DE TAREAS -->
+    <footer class="taskbar">
+        <button class="start-btn" id="start-btn">
+            <img id="start-logo-img" src="https://win98icons.alexmeub.com/icons/png/windows-0.png" alt="Start">
+            Inicio
+        </button>
+        <div class="divider"></div>
+        <div id="taskbar-status" style="font-size: 11px; color: var(--text-main);"></div>
+        <div class="system-tray">
+            <span id="user-display" style="font-weight: bold; margin-right: 5px;"></span>
+            <span class="tray-icon" id="mute-btn" title="Silenciar">🔊</span>
+            <span>🌐</span>
+            <span id="clock">--:--</span>
         </div>
-      </div>
-      <div style="margin-top:15px;border:1px solid var(--accent-yellow);padding:10px;text-align:center;color:var(--accent-yellow);font-weight:bold;font-size:0.8rem;">OPEN FOR COLLABORATIONS</div>
-      <div style="margin-top:15px;font-size:0.8rem;"><span style="color:var(--accent-cyan);">Palette:</span></div>
-      <div style="display:flex;gap:6px;margin-top:5px;" id="paletteSwatches"></div>
-    `;
-    const win = createWindow({ id: 'system', title: 'root@quantum-box: ~/system', body });
-    if (win) {
-      const cont = win.querySelector('#paletteSwatches');
-      Object.keys(PALETTES).forEach(color => {
-        const sw = document.createElement('span'); sw.className = 'swatch'; sw.style.background = color; sw.dataset.color = color;
-        if (color === (localStorage.getItem('tui-theme') || '#00ff9c')) sw.classList.add('active');
-        sw.onclick = () => applyTheme(color); cont.appendChild(sw);
-      });
-    }
-    return win;
-  },
+    </footer>
 
-  about: () => createWindow({
-    id: 'about', title: 'ben@quantum-box: ~/about',
-    body: `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">CAT BIO.TXT</h2>
-      <p style="margin:15px 0;font-size:0.85rem;line-height:1.6;">Passionate systems & web engineer with 7+ years of experience building high-throughput edge systems.</p>
-      <div style="border-left:2px solid var(--accent-magenta);padding-left:10px;font-style:italic;color:var(--accent-magenta);margin:15px 0;">"Code is like humor. When you have to explain it, it's bad."</div>
-    `
-  }),
+    <!-- OVERLAYS -->
+    <div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay-restart"></div>
 
-  skills: () => createWindow({
-    id: 'skills', title: 'ben@quantum-box: ~/skills',
-    body: `<h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">./SKILLS.SH</h2><div style="margin-top:15px;font-size:0.8rem;">Rust (85%) | TypeScript (95%) | React (92%) | Go (80%) | Docker (88%)</div>`
-  }),
-
-  collabs: () => createWindow({
-    id: 'collabs', title: 'ben@quantum-box: ~/collabs',
-    body: `<h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">CAT COLLABS.MD</h2><div style="margin-top:15px;border:1px solid var(--border-dim);padding:10px;border-radius:4px;"><b>HyperEdge Protocol</b><br><span style="font-size:0.8rem;color:var(--text-muted)">Lead Architect (2024 - Present)</span></div>`
-  }),
-
-  files: () => {
-    const body = `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">📁 /PROYECTOS</h2>
-      <div style="margin-top:15px; display:flex; flex-direction:column; gap:8px;">
-        <div onclick="alert('Abriendo Proyecto A...')" style="cursor:pointer; border:1px solid var(--border-dim); padding:10px; border-radius:4px; background:var(--bg-secondary);">
-          <div style="color:var(--accent-cyan); font-weight:bold;">📄 aetheria-dsp.js</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Audio Worklet para sintetizador web.</div>
+    <!-- VENTANA PROYECTO (Actualizada con botones Minimizar y Maximizar) -->
+    <div class="window-modal" id="project-window">
+        <div class="window-header" id="window-header">
+            <div class="window-title"><span id="modal-icon">📁</span><span id="modal-title">Título</span></div>
+            <div class="window-controls">
+                <div class="win-btn" id="minimize-btn">_</div>
+                <div class="win-btn" id="maximize-btn">□</div>
+                <div class="win-btn" id="close-btn">X</div>
+            </div>
         </div>
-        <div onclick="alert('Abriendo Proyecto B...')" style="cursor:pointer; border:1px solid var(--border-dim); padding:10px; border-radius:4px; background:var(--bg-secondary);">
-          <div style="color:var(--accent-cyan); font-weight:bold;">📦 hyperedge-core.rs</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Protocolo de caché distribuido en Rust.</div>
+        <div class="window-content">
+            <h2 id="modal-heading">Nombre</h2>
+            <p id="modal-desc">Descripción...</p>
+            <a href="#" target="_blank" class="action-btn" id="modal-link">↗ Abrir App</a>
         </div>
-        <div onclick="alert('Abriendo Proyecto C...')" style="cursor:pointer; border:1px solid var(--border-dim); padding:10px; border-radius:4px; background:var(--bg-secondary);">
-          <div style="color:var(--accent-cyan); font-weight:bold;">📜 kernel-ai-cli.py</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Co-piloto de terminal con LLM local.</div>
+    </div>
+
+    <!-- VENTANA PAPELERA -->
+    <div class="window-modal" id="trash-window">
+        <div class="window-header" id="trash-header">
+            <div class="window-title"><span>🗑️</span><span>Papelera de Reciclaje</span></div>
+            <div class="window-controls"><div class="win-btn" id="close-trash">X</div></div>
         </div>
-      </div>
-    `;
-    return createWindow({ id: 'files', title: '📁 File Manager - /projects', body });
-  },
+        <div class="window-content">
+            <p style="font-weight: bold; font-size: 16px; color: var(--text-main);">La papelera está vacía.</p>
+            <p style="font-size: 12px; margin-top: 5px; color: var(--border-dark);">Arrastra aquí tus proyectos rotos o ideas descartadas.</p>
+        </div>
+    </div>
 
-  generator: () => {
-    const body = `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">🔐 GENERADOR SEGURO</h2>
-      <div style="margin-top:15px;">
-        <input type="text" id="passResult" class="app-input" readonly value="Haz clic en Generar" style="text-align:center; font-weight:bold; color:var(--accent-magenta);">
-        <button class="app-btn" onclick="genPassword(16)">Generar Contraseña (16 chars)</button>
-        <button class="app-btn" style="background:transparent; border:1px solid var(--border-primary); color:var(--text-primary);" onclick="copyPassword()">Copiar al Portapapeles</button>
-      </div>
-    `;
-    return createWindow({ id: 'generator', title: 'PassGen.app', body });
-  },
+    <!-- VENTANA CONFIGURACIÓN -->
+    <div class="window-modal" id="config-window" style="width: 350px;">
+        <div class="window-header" id="config-header">
+            <div class="window-title"><span>⚙️</span><span>Configuración</span></div>
+            <div class="window-controls"><div class="win-btn" id="close-config">X</div></div>
+        </div>
+        <div class="window-content">
+            <h2>Panel de Control</h2>
+            <div class="config-group">
+                <label>Apariencia / Tema:</label>
+                <div class="theme-selector" id="theme-selector">
+                    <button class="theme-btn active" data-theme="theme-win98">Win 98</button>
+                    <button class="theme-btn" data-theme="theme-tui">TUI</button>
+                    <button class="theme-btn" data-theme="theme-distro">Distro</button>
+                </div>
+                <p style="font-size: 10px; color: var(--border-dark); margin-top: 5px;">Requiere reinicio para aplicar.</p>
+            </div>
+            <div class="config-group">
+                <label for="username-input">Nombre de Usuario:</label>
+                <input type="text" id="username-input" placeholder="Escribe tu nombre...">
+            </div>
+            <div class="config-group">
+                <label>Modo de Trabajo:</label>
+                <div class="config-toggle">
+                    <label class="switch"><input type="checkbox" id="online-toggle" checked><span class="slider"></span></label>
+                    <span id="online-status-text">Online 🌐</span>
+                </div>
+            </div>
+            <div class="config-group">
+                <label>Sonido:</label>
+                <div class="config-toggle">
+                    <label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label>
+                    <span id="sound-status-text">Activado 🔔</span>
+                </div>
+            </div>
+            <div class="config-group" style="margin-top: 15px; border-top: 1px solid var(--border-dark); padding-top: 10px;">
+                <label>Pantalla de Inicio:</label>
+                <div class="config-toggle">
+                    <label class="switch"><input type="checkbox" id="splash-toggle"><span class="slider"></span></label>
+                    <span id="splash-status-text">Ocultar Animación</span>
+                </div>
+            </div>
+            <div class="config-group" style="margin-top: 15px; border-top: 1px solid var(--border-dark); padding-top: 10px;">
+                <button class="action-btn" id="btn-clear-cache" style="align-self: stretch;">🗑️ Actualizar Caché</button>
+            </div>
+            <button class="action-btn" id="btn-save-config" style="align-self: stretch; margin-top: 10px;">💾 Guardar Cambios</button>
+        </div>
+    </div>
 
-  morse: () => {
-    const body = `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">📡 CÓDIGO MORSE</h2>
-      <div style="margin-top:15px;">
-        <input type="text" id="morseInput" class="app-input" placeholder="Escribe texto aquí...">
-        <button class="app-btn" onclick="playMorse()">▶ Reproducir Sonido</button>
-        <textarea id="morseResult" class="app-input" readonly style="height:80px; resize:none; color:var(--accent-cyan); font-size:1.1rem; text-align:center;"></textarea>
-        <div style="font-size:0.75rem; text-align:center; color:var(--text-muted);">A .- | B -... | C -.-. | D -.. | E .</div>
-      </div>
-    `;
-    const win = createWindow({ id: 'morse', title: 'MorseComms', body });
-    if (win) {
-      win.querySelector('#morseInput').addEventListener('input', (e) => {
-        const txt = e.target.value.toUpperCase();
-        const morse = { 'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..',' ':'/' };
-        win.querySelector('#morseResult').value = txt.split('').map(c => morse[c] || c).join(' ');
-      });
-    }
-    return win;
-  },
+    <!-- MODAL DE REINICIO -->
+    <div class="window-modal" id="restart-modal">
+        <div class="window-header">
+            <div class="window-title"><span>⚠️</span><span>Cambio de Apariencia</span></div>
+        </div>
+        <div class="window-content">
+            <p style="font-weight: bold; margin-bottom: 5px;">¿Reiniciar ahora?</p>
+            <p style="font-size: 13px;">Para aplicar los cambios de tema, es necesario reiniciar el sistema. ¿Deseas reiniciar ahora?</p>
+            <div class="buttons-row">
+                <button class="action-btn" id="btn-restart-yes" style="background-color: var(--highlight); color: var(--text-light); border-color: var(--border-light);">Sí, reiniciar</button>
+                <button class="action-btn" id="btn-restart-no">No, cancelar</button>
+            </div>
+        </div>
+    </div>
 
-  shell: () => {
-    const footer = `<div style="display:flex;padding:10px;background:var(--bg-secondary);border-top:1px solid var(--border-dim);gap:8px;"><span style="color:var(--accent-cyan);">guest@quantum-box:~$</span><input id="shellInput" style="flex:1;background:transparent;border:none;outline:none;color:var(--text-primary);font-family:var(--font-mono);" autocomplete="off"></div>`;
-    const body = `<div id="shellOutput" style="font-size:0.85rem;height:100%;overflow-y:auto;"><div style="color:var(--text-primary);">Shell v7.8 (Tab para autocompletar)</div></div>`;
-    const win = createWindow({ id: 'shell', title: 'shell', body, footer });
-    if (win) {
-      const input = win.querySelector('#shellInput');
-      setTimeout(() => input.focus(), 100);
-      input.addEventListener('keydown', (e) => {
-        playKeySound();
-        if (e.key === 'Enter') {
-          const cmd = input.value.trim().toLowerCase();
-          if (cmd) {
-            const out = win.querySelector('#shellOutput');
-            out.innerHTML += `<div><span style="color:var(--accent-cyan);">$</span> ${cmd}</div>`;
-            if (cmd === 'clear') out.innerHTML = '';
-            else if (cmd === 'snake') BUILDERS.snake();
-            else if (cmd === 'piano') BUILDERS.piano();
-            else if (cmd === 'help') out.innerHTML += `<div>Comandos: snake, piano, clear, help</div>`;
-            else out.innerHTML += `<div style="color:var(--accent-red);">command not found: ${cmd}</div>`;
-            input.value = '';
-            out.scrollTop = out.scrollHeight;
-          }
+    <!-- TOAST -->
+    <div class="toast" id="toast">Mensaje</div>
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="sfx-click" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/click.wav" preload="auto"></audio>
+    <audio id="sfx-open" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/open.wav" preload="auto"></audio>
+    <audio id="sfx-close" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/close.wav" preload="auto"></audio>
+    <audio id="sfx-error" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/error.wav" preload="auto"></audio>
+    <audio id="sfx-trash" src="https://cdn.jsdelivr.net/gh/nostalgic-sounds/win98@main/audio/trash.wav" preload="auto"></audio>
+
+    <script>
+        // --- DATOS DE TUS PROYECTOS ---
+        const projects = [
+            { id: 1, name: "Audio Michi App", desc: "Herramienta de audio 100% local en el navegador.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎧" },
+            { id: 2, name: "Miaulement Conversor", desc: "Conversor de formatos de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎼" },
+            { id: 3, name: "Video Michi App", desc: "Editor y procesador de video local.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎥" },
+            { id: 4, name: "Moustache Mastering", desc: "Herramienta de masterización de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎵" },
+            { id: 5, name: "S Canvas Generator", desc: "Generador de gráficos y canvas.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🖼️" },
+            { id: 6, name: "Meow Espectograma", desc: "Visualizador de espectrograma de audio.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "📊" },
+            { id: 7, name: "Reproductor Online", desc: "Reproductor de música en línea.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "▶️" },
+            { id: 8, name: "Michi Red Book", desc: "Mastering estilo Red Book.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "💿" },
+            { id: 9, name: "HTML App", desc: "Aplicación web genérica.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🌐" },
+            { id: 10, name: "MusicApp", desc: "Reproducción y almacenamiento online (Requiere registro).", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🎶" },
+            { id: 11, name: "Michi Loudness", desc: "Medidor de loudness y análisis.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "🔊" },
+            { id: 12, name: "Libreta de Notas", desc: "Bloc de notas rápido.", url: "https://galeed.github.io/Moustache-de-Chat-Lab/", icon: "📓" }
+        ];
+
+        // DOM References
+        const body = document.body;
+        const splashScreen = document.getElementById('splash-screen');
+        const loadingBar = document.getElementById('loading-bar');
+        const hideSplashCheckbox = document.getElementById('hide-splash-checkbox');
+        const skipSplashBtn = document.getElementById('skip-splash-btn');
+        const desktop = document.getElementById('desktop');
+        const startMenuList = document.getElementById('start-menu-list');
+        const startBtn = document.getElementById('start-btn');
+        const startMenu = document.getElementById('start-menu');
+        const modal = document.getElementById('project-window');
+        const overlay = document.getElementById('overlay');
+        
+        // Botones de ventana
+        const closeBtn = document.getElementById('close-btn');
+        const minimizeBtn = document.getElementById('minimize-btn');
+        const maximizeBtn = document.getElementById('maximize-btn');
+        
+        const modalTitle = document.getElementById('modal-title');
+        const modalHeading = document.getElementById('modal-heading');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalLink = document.getElementById('modal-link');
+        const modalIcon = document.getElementById('modal-icon');
+        const taskbarStatus = document.getElementById('taskbar-status');
+        const configWindow = document.getElementById('config-window');
+        const closeConfig = document.getElementById('close-config');
+        const configHeader = document.getElementById('config-header');
+        const usernameInput = document.getElementById('username-input');
+        const onlineToggle = document.getElementById('online-toggle');
+        const onlineStatusText = document.getElementById('online-status-text');
+        const soundToggle = document.getElementById('sound-toggle');
+        const soundStatusText = document.getElementById('sound-status-text');
+        const muteBtn = document.getElementById('mute-btn');
+        const splashToggle = document.getElementById('splash-toggle');
+        const splashStatusText = document.getElementById('splash-status-text');
+        const userDisplay = document.getElementById('user-display');
+        const btnSaveConfig = document.getElementById('btn-save-config');
+        const btnClearCache = document.getElementById('btn-clear-cache');
+        const toast = document.getElementById('toast');
+        const themeButtons = document.querySelectorAll('.theme-btn');
+        const restartModal = document.getElementById('restart-modal');
+        const overlayRestart = document.getElementById('overlay-restart');
+        const btnRestartYes = document.getElementById('btn-restart-yes');
+        const btnRestartNo = document.getElementById('btn-restart-no');
+        const trashWindow = document.getElementById('trash-window');
+        const closeTrash = document.getElementById('close-trash');
+        const trashHeader = document.getElementById('trash-header');
+        
+        // BSOD References
+        const bsodScreen = document.getElementById('bsod-screen');
+        const bsodRebootBtn = document.getElementById('bsod-reboot-btn');
+        const startLogoImg = document.getElementById('start-logo-img');
+        const clockDisplay = document.getElementById('clock');
+
+        // Audio
+        const sfxClick = document.getElementById('sfx-click');
+        const sfxOpen = document.getElementById('sfx-open');
+        const sfxClose = document.getElementById('sfx-close');
+        const sfxError = document.getElementById('sfx-error');
+        const sfxTrash = document.getElementById('sfx-trash');
+
+        let selectedIcon = null;
+        let currentTheme = 'theme-win98';
+        let pendingTheme = null;
+        let isDraggingIcon = false;
+        let iconOffsetX = 0, iconOffsetY = 0;
+        let draggedIcon = null;
+        let soundEnabled = localStorage.getItem('moustache_sound') !== 'false';
+        let isMaximized = false; // Estado de la ventana de proyecto
+
+        // --- LÓGICA DEL EASTER EGG (BSOD) ---
+        let bsodClickCount = 0;
+        let bsodTimeout = null;
+
+        function triggerBsod() {
+            playSound(sfxError);
+            bsodScreen.classList.add('active');
         }
-        if (e.key === 'Tab') {
-          e.preventDefault();
-          const cmds = ['snake', 'piano', 'help', 'clear'];
-          const val = input.value.toLowerCase();
-          const match = cmds.find(c => c.startsWith(val));
-          if (match) input.value = match;
+
+        function resetBsodClick() {
+            bsodClickCount = 0;
+            clearTimeout(bsodTimeout);
         }
-      });
-    }
-    return win;
-  },
 
-  piano: () => {
-    const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
-    let keysHtml = '';
-    notes.forEach((freq, i) => {
-      keysHtml += `<div class="piano-key" data-freq="${freq}" style="width: 12.5%; height: 150px; display:inline-block; border-right:1px solid #000; text-align:center; padding-top:120px; font-size:10px; box-sizing:border-box;">${['C','D','E','F','G','A','B','C'][i]}</div>`;
-    });
-    const body = `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">🎹 PIANO (A,S,D,F,G,H,J,K)</h2>
-      <div style="margin-top:20px; display:flex; justify-content:center;" id="pianoContainer">${keysHtml}</div>
-    `;
-    const win = createWindow({ id: 'piano', title: 'Piano Virtual', body });
-    if (win) {
-      const keys = win.querySelectorAll('.piano-key');
-      const keyMap = { 'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 4, 'h': 5, 'j': 6, 'k': 7 };
-      const handleKey = (e) => {
-        if (!win.classList.contains('focused')) return;
-        // FIX: no disparar si el foco está en un input
-        if (document.activeElement && ['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
-        const idx = keyMap[e.key.toLowerCase()];
-        if (idx !== undefined) {
-          playNote(notes[idx]);
-          keys[idx].style.background = 'var(--text-primary)';
-          setTimeout(() => keys[idx].style.background = '', 150);
+        function handleSecretClick() {
+            bsodClickCount++;
+            clearTimeout(bsodTimeout);
+            
+            if (bsodClickCount >= 3) {
+                triggerBsod();
+                resetBsodClick();
+            } else {
+                bsodTimeout = setTimeout(resetBsodClick, 1500);
+            }
         }
-      };
-      document.addEventListener('keydown', handleKey);
-      keys.forEach((k, i) => {
-        k.onmousedown = () => { playNote(notes[i]); k.style.background = 'var(--text-primary)'; };
-        k.onmouseup = () => { k.style.background = ''; };
-        k.onmouseleave = () => { k.style.background = ''; };
-      });
-      const baseCleanup = win._cleanup;
-      win._cleanup = () => { document.removeEventListener('keydown', handleKey); if (baseCleanup) baseCleanup(); };
-    }
-    return win;
-  },
 
-  // FIX COMPLETO: Drum Machine funcional
-  drum: () => {
-    const body = `
-      <h2 style="color:var(--accent-yellow);border-bottom:1px dashed var(--border-dim);padding-bottom:5px;">🥁 DRUM MACHINE</h2>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;font-size:0.75rem;">
-        <label>BPM: <input type="number" id="drumBpm" value="120" min="60" max="200" style="width:50px;background:var(--bg-secondary);border:1px solid var(--border-dim);color:var(--text-primary);padding:2px 4px;border-radius:3px;"></label>
-      </div>
-      <div id="drumGrid" style="display:grid;grid-template-columns:50px repeat(16,1fr);gap:2px;margin-top:15px;"></div>
-      <div style="margin-top:15px;display:flex;gap:8px;">
-        <button id="drumPlayBtn" style="background:var(--text-primary);color:var(--bg-primary);padding:6px 15px;border:none;border-radius:3px;cursor:pointer;font-weight:bold;flex:1;">▶ PLAY</button>
-        <button onclick="clearDrum()" style="background:transparent;border:1px solid var(--border-dim);color:var(--text-primary);padding:6px 15px;border-radius:3px;cursor:pointer;">CLEAR</button>
-      </div>
-    `;
-    const win = createWindow({ id: 'drum', title: 'Drum Sequencer', body });
-    if (win) {
-      const grid = win.querySelector('#drumGrid');
-      const labels = ['Kick','Snare','Hat','Clap'];
-      for (let c = 0; c < 4; c++) {
-        grid.innerHTML += `<div style="color:var(--accent-cyan);font-size:0.7rem;text-align:right;padding-right:5px;line-height:22px;">${labels[c]}</div>`;
-        for (let s = 0; s < 16; s++) {
-          grid.innerHTML += `<div class="drum-cell" data-c="${c}" data-s="${s}" style="background:var(--bg-secondary);border:1px solid var(--border-dim);"></div>`;
+        startLogoImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleSecretClick();
+        });
+
+        clockDisplay.addEventListener('click', () => {
+            handleSecretClick();
+        });
+
+        bsodRebootBtn.addEventListener('click', () => {
+            location.reload();
+        });
+
+        // --- AUDIO HELPERS ---
+        function playSound(audioElement) {
+            if (!soundEnabled) return;
+            try {
+                audioElement.currentTime = 0;
+                audioElement.play().catch(e => console.log("Audio bloqueado por el navegador:", e));
+            } catch (e) { console.log(e); }
         }
-      }
-      win.querySelectorAll('.drum-cell').forEach(cell => {
-        cell.onclick = () => {
-          const c = +cell.dataset.c, s = +cell.dataset.s;
-          State.drum.grid[c][s] = !State.drum.grid[c][s];
-          cell.classList.toggle('on', State.drum.grid[c][s]);
-          playBeep([100,200,600,1500][c], 0.05, 'sine', 0.08);
-        };
-      });
-      win.querySelector('#drumBpm').addEventListener('change', (e) => {
-        State.drum.bpm = parseInt(e.target.value) || 120;
-        if (State.drum.playing) { stopDrum(); startDrum(win); }
-      });
-      win.querySelector('#drumPlayBtn').onclick = () => {
-        if (State.drum.playing) stopDrum();
-        else startDrum(win);
-        win.querySelector('#drumPlayBtn').textContent = State.drum.playing ? '⏸ STOP' : '▶ PLAY';
-      };
-      const baseCleanup = win._cleanup;
-      win._cleanup = () => { stopDrum(); if (baseCleanup) baseCleanup(); };
-    }
-    return win;
-  },
 
-  snake: () => {
-    const body = `
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span>Score: <span id="sScore" style="color:var(--accent-yellow);">0</span></span><span>High: <span id="sHigh" style="color:var(--accent-magenta);">0</span></span></div>
-      <canvas id="snakeC" width="400" height="400" style="border:1px solid var(--border-primary);background:#000;display:block;margin:0 auto;max-width:100%;"></canvas>
-      <div class="dpad">
-        <div class="dpad-empty"></div><div class="dpad-btn" onclick="snakeDir('up')">↑</div><div class="dpad-empty"></div>
-        <div class="dpad-btn" onclick="snakeDir('left')">←</div><div class="dpad-empty"></div><div class="dpad-btn" onclick="snakeDir('right')">→</div>
-        <div class="dpad-empty"></div><div class="dpad-btn" onclick="snakeDir('down')">↓</div><div class="dpad-empty"></div>
-      </div>
-    `;
-    const win = createWindow({ id: 'snake', title: 'Snake.exe', body, className: 'game-window' });
-    if (win) setTimeout(() => startSnake(win), 50);
-    return win;
-  },
+        function updateSoundUI() {
+            soundStatusText.textContent = soundEnabled ? "Activado 🔔" : "Desactivado 🔇";
+            muteBtn.textContent = soundEnabled ? "🔊" : "🔇";
+            soundToggle.checked = soundEnabled;
+        }
 
-  tetris: () => {
-    const body = `
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.8rem;">
-        <span>Score: <span id="tScore" style="color:var(--accent-yellow);">0</span></span>
-        <span>Lines: <span id="tLines" style="color:var(--accent-magenta);">0</span></span>
-      </div>
-      <canvas id="tetrisC" width="240" height="480" style="border:1px solid var(--border-primary);background:#000;display:block;margin:0 auto;max-width:100%;"></canvas>
-      <div class="dpad">
-        <div class="dpad-empty"></div><div class="dpad-btn" onclick="tetrisMove('rotate')">↻</div><div class="dpad-empty"></div>
-        <div class="dpad-btn" onclick="tetrisMove('left')">←</div><div class="dpad-btn" onclick="tetrisMove('down')">↓</div><div class="dpad-btn" onclick="tetrisMove('right')">→</div>
-      </div>
-    `;
-    const win = createWindow({ id: 'tetris', title: 'Tetris.exe', body, className: 'game-window' });
-    if (win) setTimeout(() => startTetris(win), 50);
-    return win;
-  },
+        // --- LÓGICA DE TEMAS ---
+        function applyTheme(themeName) {
+            body.classList.remove('theme-win98', 'theme-tui', 'theme-distro');
+            body.classList.add(themeName);
+            currentTheme = themeName;
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === themeName);
+            });
+            localStorage.setItem('moustache_theme', themeName);
+        }
 
-  '2048': () => {
-    const body = `
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.8rem;">
-        <span>Score: <span id="g2048Score" style="color:var(--accent-yellow);">0</span></span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--bg-secondary);padding:8px;border-radius:5px;width:100%;max-width:300px;margin:0 auto;aspect-ratio:1;" id="grid2048"></div>
-      <div class="dpad">
-        <div class="dpad-empty"></div><div class="dpad-btn" onclick="move2048('up')">↑</div><div class="dpad-empty"></div>
-        <div class="dpad-btn" onclick="move2048('left')">←</div><div class="dpad-btn" onclick="move2048('down')">↓</div><div class="dpad-btn" onclick="move2048('right')">→</div>
-      </div>
-    `;
-    const win = createWindow({ id: '2048', title: '2048.exe', body, className: 'game-window' });
-    if (win) setTimeout(() => start2048(win), 50);
-    return win;
-  },
+        const savedTheme = localStorage.getItem('moustache_theme');
+        if (savedTheme) applyTheme(savedTheme);
+        else applyTheme('theme-win98');
 
-  hack: () => {
-    const body = `
-      <h2 style="color:var(--accent-red);text-align:center;">⚠️ FIREWALL DETECTADO</h2>
-      <p style="font-size:0.8rem;text-align:center;margin:10px 0;">Adivina la contraseña de 4 dígitos.</p>
-      <div style="font-size:2rem;text-align:center;color:var(--accent-red);margin:20px 0;" id="hackTimer">15s</div>
-      <input type="text" class="hack-input" id="hackInput" maxlength="4" placeholder="0000" autocomplete="off">
-      <div id="hackLog" style="font-size:0.75rem;color:var(--text-muted);margin-top:15px;text-align:center;"></div>
-    `;
-    const win = createWindow({ id: 'hack', title: 'BruteForce.sh', body });
-    if (win) startHack(win);
-    return win;
-  }
-};
+        themeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                playSound(sfxClick);
+                const selectedTheme = btn.dataset.theme;
+                if (selectedTheme === currentTheme) return;
+                themeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                pendingTheme = selectedTheme;
+                openRestartModal();
+            });
+        });
 
-// =====================================================================
-// DRUM MACHINE: funciones globales
-// =====================================================================
-function startDrum(win) {
-  if (State.drum.playing) return;
-  State.drum.playing = true;
-  State.drum.currentStep = 0;
-  const interval = (60 / State.drum.bpm) * 1000 / 4; // 16avos
-  const freqs = [80, 200, 600, 1200];
-  const stepMs = interval;
+        function openRestartModal() {
+            restartModal.classList.add('active');
+            overlayRestart.classList.add('active');
+            restartModal.style.top = '50%';
+            restartModal.style.left = '50%';
+            restartModal.style.transform = 'translate(-50%, -50%)';
+        }
 
-  State.drum.timer = setInterval(() => {
-    const s = State.drum.currentStep;
-    // Reproducir sonidos activos
-    for (let c = 0; c < 4; c++) {
-      if (State.drum.grid[c][s]) playBeep(freqs[c], 0.06, 'sine', 0.12);
-    }
-    // Resaltar columna actual
-    win.querySelectorAll('.drum-cell.playing').forEach(el => el.classList.remove('playing'));
-    win.querySelectorAll(`.drum-cell[data-s="${s}"]`).forEach(el => el.classList.add('playing'));
-    State.drum.currentStep = (s + 1) % 16;
-  }, stepMs);
-}
-function stopDrum() {
-  State.drum.playing = false;
-  if (State.drum.timer) { clearInterval(State.drum.timer); State.drum.timer = null; }
-  document.querySelectorAll('.drum-cell.playing').forEach(el => el.classList.remove('playing'));
-}
-function clearDrum() {
-  State.drum.grid = Array.from({ length: 4 }, () => Array(16).fill(false));
-  document.querySelectorAll('.drum-cell.on').forEach(el => el.classList.remove('on'));
-}
+        function closeRestartModal() {
+            restartModal.classList.remove('active');
+            overlayRestart.classList.remove('active');
+            if (pendingTheme) {
+                themeButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+                });
+                pendingTheme = null;
+            }
+        }
 
-// =====================================================================
-// GENERADOR / MORSE
-// =====================================================================
-window.genPassword = (len) => {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-  let pass = "";
-  for (let i = 0; i < len; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-  document.getElementById('passResult').value = pass;
-  playBeep(1000, 0.05);
-};
-window.copyPassword = () => {
-  const val = document.getElementById('passResult').value;
-  navigator.clipboard.writeText(val).then(() => toast("📋 Contraseña copiada")).catch(() => toast("⚠ No se pudo copiar", true));
-};
-window.playMorse = () => {
-  const text = document.getElementById('morseResult').value;
-  if (!text) return;
-  let time = 0;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (c === '.') { setTimeout(() => playBeep(800, 0.1), time); time += 150; }
-    else if (c === '-') { setTimeout(() => playBeep(800, 0.3), time); time += 350; }
-    else if (c === ' ') { time += 300; }
-  }
-};
+        btnRestartYes.addEventListener('click', () => {
+            playSound(sfxClick);
+            if (pendingTheme) {
+                localStorage.setItem('moustache_theme', pendingTheme);
+                location.reload();
+            }
+        });
+        btnRestartNo.addEventListener('click', () => { playSound(sfxClose); closeRestartModal(); });
+        overlayRestart.addEventListener('click', closeRestartModal);
 
-// =====================================================================
-// SNAKE (fix canvas colors)
-// =====================================================================
-let snakeGame;
-window.snakeDir = (d) => {
-  if (!snakeGame) return;
-  if (d === 'up' && snakeGame.dir.y === 0) snakeGame.nextDir = {x:0, y:-1};
-  if (d === 'down' && snakeGame.dir.y === 0) snakeGame.nextDir = {x:0, y:1};
-  if (d === 'left' && snakeGame.dir.x === 0) snakeGame.nextDir = {x:-1, y:0};
-  if (d === 'right' && snakeGame.dir.x === 0) snakeGame.nextDir = {x:1, y:0};
-};
-function startSnake(win) {
-  const canvas = win.querySelector('#snakeC'), ctx = canvas.getContext('2d');
-  const scoreEl = win.querySelector('#sScore'), highEl = win.querySelector('#sHigh');
-  let high = parseInt(localStorage.getItem('snake-high') || '0'); highEl.textContent = high;
-  let snake = [{x:10, y:10}], dir = {x:1, y:0}, food = {x:15, y:10}, score = 0, loop;
-  snakeGame = { dir, nextDir: dir };
+        // --- SPLASH ---
+        let splashTimeout = null;
+        function finishSplash() {
+            if (splashTimeout) { clearTimeout(splashTimeout); splashTimeout = null; }
+            document.querySelectorAll('.loading-block').forEach(block => block.classList.add('paused'));
+            splashScreen.classList.add('fade-out');
+            setTimeout(() => { splashScreen.classList.add('hidden'); }, 800);
+        }
 
-  const tick = () => {
-    dir = snakeGame.nextDir; snakeGame.dir = dir;
-    const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
-    if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 || snake.some(s => s.x === head.x && s.y === head.y)) {
-      clearInterval(loop); playBeep(220, 0.4);
-      if (score > high) { high = score; localStorage.setItem('snake-high', high); highEl.textContent = high; }
-      return;
-    }
-    snake.unshift(head);
-    if (head.x === food.x && head.y === food.y) {
-      score += 10; scoreEl.textContent = score;
-      food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*20)};
-      playBeep(880, 0.08);
-    } else snake.pop();
+        function initSplash() {
+            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
+            if (hideSplash) { splashScreen.classList.add('hidden'); return; }
+            for (let i = 0; i < 10; i++) {
+                const block = document.createElement('div');
+                block.className = 'loading-block';
+                block.style.animationDelay = `${i * 0.15}s`;
+                loadingBar.appendChild(block);
+            }
+            splashTimeout = setTimeout(() => { finishSplash(); }, 4000);
+            skipSplashBtn.addEventListener('click', finishSplash);
+            hideSplashCheckbox.addEventListener('change', (e) => {
+                localStorage.setItem('moustache_hide_splash', e.target.checked);
+            });
+        }
 
-    // FIX: leer colores CSS antes de pintar
-    const PRIMARY = cssVar('--text-primary');
-    const SECONDARY = cssVar('--text-secondary');
+        // --- ICONOS Y ARRASTRE ---
+        function createDesktopIcons() {
+            // Icono Configuración
+            const configDiv = document.createElement('div');
+            configDiv.className = 'project-icon';
+            configDiv.innerHTML = `<div class="icon-emoji">⚙️</div><span>Configuración</span>`;
+            configDiv.style.left = '20px';
+            configDiv.style.top = '20px';
+            configDiv.dataset.id = 'config';
+            setupIconEvents(configDiv, null, true);
+            desktop.appendChild(configDiv);
 
-    ctx.fillStyle = '#000'; ctx.fillRect(0,0,400,400);
-    ctx.fillStyle = PRIMARY; ctx.fillRect(food.x*20, food.y*20, 18, 18);
-    snake.forEach((s,i) => {
-      ctx.fillStyle = i === 0 ? SECONDARY : PRIMARY;
-      ctx.fillRect(s.x*20, s.y*20, 18, 18);
-    });
-  };
-  loop = setInterval(tick, 110);
-  const keyH = (e) => {
-    if (!win.classList.contains('focused')) return;
-    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
-    if (e.key === 'ArrowUp') snakeDir('up');
-    else if (e.key === 'ArrowDown') snakeDir('down');
-    else if (e.key === 'ArrowLeft') snakeDir('left');
-    else if (e.key === 'ArrowRight') snakeDir('right');
-  };
-  document.addEventListener('keydown', keyH);
-  const baseCleanup = win._cleanup;
-  win._cleanup = () => { clearInterval(loop); document.removeEventListener('keydown', keyH); if (baseCleanup) baseCleanup(); };
-}
+            // Icono Papelera
+            const trashDiv = document.createElement('div');
+            trashDiv.className = 'project-icon';
+            trashDiv.innerHTML = `<div class="icon-emoji">🗑️</div><span>Papelera</span>`;
+            trashDiv.style.left = '20px';
+            trashDiv.style.top = '130px';
+            trashDiv.dataset.id = 'trash';
+            setupIconEvents(trashDiv, null, false, true);
+            desktop.appendChild(trashDiv);
 
-// =====================================================================
-// TETRIS (fix canvas colors)
-// =====================================================================
-let tGame;
-window.tetrisMove = (dir) => {
-  if (!tGame) return;
-  const { piece, pos } = tGame;
-  let rotated = piece.shape;
-  if (dir === 'rotate') {
-    rotated = piece.shape[0].map((_, i) => piece.shape.map(row => row[i]).reverse());
-    if (!tCollide(pos.x, pos.y, rotated)) tGame.piece.shape = rotated;
-  } else if (dir === 'left' && !tCollide(pos.x-1, pos.y, piece.shape)) pos.x--;
-  else if (dir === 'right' && !tCollide(pos.x+1, pos.y, piece.shape)) pos.x++;
-  else if (dir === 'down') tGame.tick(true);
-};
-function tCollide(x, y, shape) {
-  const { board } = tGame;
-  for (let r = 0; r < shape.length; r++) {
-    for (let c = 0; c < shape[r].length; c++) {
-      if (!shape[r][c]) continue;
-      const nx = x + c, ny = y + r;
-      if (nx < 0 || nx >= 12 || ny >= 24) return true;
-      if (ny >= 0 && board[ny][nx]) return true;
-    }
-  }
-  return false;
-}
-function startTetris(win) {
-  const canvas = win.querySelector('#tetrisC'), ctx = canvas.getContext('2d');
-  const scoreEl = win.querySelector('#tScore'), linesEl = win.querySelector('#tLines');
-  const CELL = 20;
-  const SHAPES = [
-    { shape: [[1,1,1,1]], color: '#00ff9c' }, { shape: [[1,1],[1,1]], color: '#ffd580' },
-    { shape: [[0,1,0],[1,1,1]], color: '#ff79c6' }, { shape: [[1,0,0],[1,1,1]], color: '#39d0d8' },
-    { shape: [[0,0,1],[1,1,1]], color: '#ffb86c' }, { shape: [[0,1,1],[1,1,0]], color: '#7ee787' },
-    { shape: [[1,1,0],[0,1,1]], color: '#ff5555' }
-  ];
+            // Proyectos
+            projects.forEach((project, index) => {
+                const div = document.createElement('div');
+                div.className = 'project-icon';
+                div.innerHTML = `<div class="icon-emoji">${project.icon}</div><span>${project.name}</span>`;
+                div.dataset.id = project.id;
+                
+                const col = Math.floor(index / 5);
+                const row = index % 5;
+                const defaultX = 130 + (col * 120);
+                const defaultY = 20 + (row * 110);
 
-  tGame = { board: Array.from({length: 24}, () => Array(12).fill(0)), score: 0, lines: 0 };
+                const savedPos = localStorage.getItem(`icon_pos_${project.id}`);
+                if (savedPos) {
+                    const pos = JSON.parse(savedPos);
+                    div.style.left = pos.x + 'px';
+                    div.style.top = pos.y + 'px';
+                } else {
+                    div.style.left = defaultX + 'px';
+                    div.style.top = defaultY + 'px';
+                }
 
-  tGame.spawn = () => {
-    const idx = Math.floor(Math.random() * SHAPES.length);
-    const p = JSON.parse(JSON.stringify(SHAPES[idx]));
-    tGame.piece = p; tGame.pos = { x: Math.floor(12/2) - Math.ceil(p.shape[0].length/2), y: 0 };
-    if (tCollide(tGame.pos.x, tGame.pos.y, p.shape)) { tGame.over = true; }
-  };
-  tGame.spawn();
+                setupIconEvents(div, project);
+                desktop.appendChild(div);
+            });
+        }
 
-  tGame.tick = () => {
-    if (tGame.over) return;
-    if (!tCollide(tGame.pos.x, tGame.pos.y + 1, tGame.piece.shape)) tGame.pos.y++;
-    else {
-      tGame.piece.shape.forEach((row, r) => row.forEach((val, c) => {
-        if (val && tGame.pos.y + r >= 0) tGame.board[tGame.pos.y + r][tGame.pos.x + c] = tGame.piece.color;
-      }));
-      let cleared = 0;
-      for (let r = 23; r >= 0; r--) {
-        if (tGame.board[r].every(c => c)) { tGame.board.splice(r, 1); tGame.board.unshift(Array(12).fill(0)); cleared++; r++; }
-      }
-      if (cleared) { tGame.lines += cleared; tGame.score += cleared * 100; scoreEl.textContent = tGame.score; linesEl.textContent = tGame.lines; playBeep(660, 0.1); }
-      tGame.spawn();
-    }
-    drawT();
-  };
+        function setupIconEvents(element, projectData, isConfig = false, isTrash = false) {
+            element.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                selectIcon(element);
+                playSound(sfxClick);
+                
+                isDraggingIcon = true;
+                draggedIcon = element;
+                const rect = element.getBoundingClientRect();
+                iconOffsetX = e.clientX - rect.left;
+                iconOffsetY = e.clientY - rect.top;
+                
+                document.querySelectorAll('.project-icon').forEach(el => el.style.zIndex = '1');
+                element.style.zIndex = '10';
+            });
 
-  function drawT() {
-    const gridColor = cssVar('--text-primary');
-    ctx.fillStyle = '#000'; ctx.fillRect(0,0,240,480);
-    // Grid tenue usando el color primario
-    ctx.strokeStyle = gridColor;
-    ctx.globalAlpha = 0.08;
-    for(let i=0; i<=12; i++) { ctx.beginPath(); ctx.moveTo(i*CELL,0); ctx.lineTo(i*CELL,480); ctx.stroke(); }
-    for(let i=0; i<=24; i++) { ctx.beginPath(); ctx.moveTo(0,i*CELL); ctx.lineTo(240,i*CELL); ctx.stroke(); }
-    ctx.globalAlpha = 1;
-    tGame.board.forEach((row, r) => row.forEach((c, col) => {
-      if (c) { ctx.fillStyle = c; ctx.fillRect(col*CELL+1, r*CELL+1, CELL-2, CELL-2); }
-    }));
-    if (tGame.piece) {
-      tGame.piece.shape.forEach((row, r) => row.forEach((val, c) => {
-        if (val) { ctx.fillStyle = tGame.piece.color; ctx.fillRect((tGame.pos.x+c)*CELL+1, (tGame.pos.y+r)*CELL+1, CELL-2, CELL-2); }
-      }));
-    }
-  }
+            element.addEventListener('dblclick', () => {
+                if (isConfig) openConfig();
+                else if (isTrash) openTrash();
+                else if (projectData) openWindow(projectData);
+            });
+        }
 
-  const loop = setInterval(() => tGame.tick(), 500);
-  const keyH = (e) => {
-    if (!win.classList.contains('focused')) return;
-    if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) e.preventDefault();
-    if (e.key === 'ArrowLeft') tetrisMove('left');
-    if (e.key === 'ArrowRight') tetrisMove('right');
-    if (e.key === 'ArrowDown') tetrisMove('down');
-    if (e.key === 'ArrowUp') tetrisMove('rotate');
-  };
-  document.addEventListener('keydown', keyH);
-  const baseCleanup = win._cleanup;
-  win._cleanup = () => { clearInterval(loop); document.removeEventListener('keydown', keyH); if (baseCleanup) baseCleanup(); };
-  drawT();
-}
+        document.addEventListener('mousemove', (e) => {
+            if (!isDraggingIcon || !draggedIcon) return;
+            const desktopRect = desktop.getBoundingClientRect();
+            let newX = e.clientX - desktopRect.left - iconOffsetX;
+            let newY = e.clientY - desktopRect.top - iconOffsetY;
+            if (newX < 0) newX = 0;
+            if (newY < 0) newY = 0;
+            if (newX > desktopRect.width - draggedIcon.offsetWidth) newX = desktopRect.width - draggedIcon.offsetWidth;
+            if (newY > desktopRect.height - draggedIcon.offsetHeight) newY = desktopRect.height - draggedIcon.offsetHeight;
+            draggedIcon.style.left = newX + 'px';
+            draggedIcon.style.top = newY + 'px';
+        });
 
-// =====================================================================
-// 2048 (fix direcciones)
-// =====================================================================
-let g2048;
-function slideRow(row, scoreRef) {
-  let arr = row.filter(v => v);
-  let merged = []; let i = 0;
-  while (i < arr.length) {
-    if (arr[i] === arr[i+1]) {
-      const v = arr[i] * 2;
-      merged.push(v);
-      scoreRef.score += v;
-      i += 2;
-    } else {
-      merged.push(arr[i]);
-      i++;
-    }
-  }
-  while (merged.length < 4) merged.push(0);
-  return merged;
-}
-window.move2048 = (dir) => {
-  if (!g2048) return;
-  const before = JSON.stringify(g2048.grid);
-  const ref = { score: g2048.score };
+        document.addEventListener('mouseup', () => {
+            if (isDraggingIcon && draggedIcon) {
+                const id = draggedIcon.dataset.id;
+                if (id) {
+                    const pos = { x: parseInt(draggedIcon.style.left), y: parseInt(draggedIcon.style.top) };
+                    localStorage.setItem(`icon_pos_${id}`, JSON.stringify(pos));
+                }
+            }
+            isDraggingIcon = false;
+            draggedIcon = null;
+        });
 
-  if (dir === 'left' || dir === 'right') {
-    for (let r = 0; r < 4; r++) {
-      let row = g2048.grid[r];
-      if (dir === 'right') row = row.slice().reverse();
-      row = slideRow(row, ref);
-      if (dir === 'right') row.reverse();
-      g2048.grid[r] = row;
-    }
-  } else if (dir === 'up' || dir === 'down') {
-    for (let c = 0; c < 4; c++) {
-      let col = [g2048.grid[0][c], g2048.grid[1][c], g2048.grid[2][c], g2048.grid[3][c]];
-      if (dir === 'down') col = col.reverse();
-      col = slideRow(col, ref);
-      if (dir === 'down') col.reverse();
-      for (let r = 0; r < 4; r++) g2048.grid[r][c] = col[r];
-    }
-  }
-  g2048.score = ref.score;
+        // --- SELECCIÓN ---
+        function selectIcon(iconElement) {
+            if (selectedIcon) selectedIcon.classList.remove('selected');
+            iconElement.classList.add('selected');
+            selectedIcon = iconElement;
+        }
 
-  if (JSON.stringify(g2048.grid) !== before) {
-    g2048.spawn();
-    g2048.draw();
-    document.getElementById('g2048Score').textContent = g2048.score;
-    playBeep(600, 0.04);
-  }
-};
-function start2048(win) {
-  g2048 = { grid: Array.from({length:4},()=>Array(4).fill(0)), score: 0 };
-  g2048.spawn = () => {
-    let empty = [];
-    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) if (g2048.grid[r][c] === 0) empty.push([r,c]);
-    if (!empty.length) return;
-    const [r,c] = empty[Math.floor(Math.random()*empty.length)];
-    g2048.grid[r][c] = Math.random() < 0.9 ? 2 : 4;
-  };
-  g2048.draw = () => {
-    const gridEl = win.querySelector('#grid2048'); gridEl.innerHTML = '';
-    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
-      const v = g2048.grid[r][c];
-      const cell = document.createElement('div');
-      cell.style.cssText = `aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-weight:bold; border-radius:4px; font-size:1.1rem; background:var(--bg-hover); color:${v?'var(--text-primary)':'transparent'}; border:1px solid ${v?'var(--border-primary)':'transparent'};`;
-      if (v) cell.textContent = v;
-      gridEl.appendChild(cell);
-    }
-  };
-  g2048.spawn(); g2048.spawn(); g2048.draw();
-  const keyH = (e) => {
-    if (!win.classList.contains('focused')) return;
-    if (!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) return;
-    e.preventDefault();
-    move2048(e.key.replace('Arrow','').toLowerCase());
-  };
-  document.addEventListener('keydown', keyH);
-  const baseCleanup = win._cleanup;
-  win._cleanup = () => { document.removeEventListener('keydown', keyH); if (baseCleanup) baseCleanup(); };
-}
+        desktop.addEventListener('mousedown', (e) => {
+            if (e.target === desktop) {
+                if (selectedIcon) { selectedIcon.classList.remove('selected'); selectedIcon = null; }
+            }
+        });
 
-// =====================================================================
-// HACK
-// =====================================================================
-function startHack(win) {
-  const timerEl = win.querySelector('#hackTimer'), input = win.querySelector('#hackInput'), log = win.querySelector('#hackLog');
-  const target = String(Math.floor(Math.random()*9000)+1000);
-  input.focus(); let time = 15;
-  const loop = setInterval(() => {
-    time--; timerEl.textContent = time + 's';
-    if (time <= 0) {
-      clearInterval(loop); input.disabled = true;
-      timerEl.textContent = 'LOCKED';
-      log.innerHTML = `<span style="color:red">Bloqueado. Pass: ${target}</span>`;
-      playBeep(100, 0.5);
-    }
-  }, 1000);
+        // --- MENÚ DE INICIO ---
+        projects.forEach(project => {
+            const item = document.createElement('div');
+            item.className = 'start-item';
+            item.innerHTML = `<div class="icon-emoji">${project.icon}</div><span>${project.name}</span>`;
+            item.addEventListener('click', () => { playSound(sfxClick); openWindow(project); closeStartMenu(); });
+            startMenuList.appendChild(item);
+        });
 
-  input.oninput = () => {
-    if (input.value === target) {
-      clearInterval(loop); input.disabled = true;
-      timerEl.textContent = 'GRANTED'; timerEl.style.color = 'var(--text-primary)';
-      log.innerHTML = `<span style="color:var(--text-primary)">✅ ACCESO CONCEDIDO</span>`;
-      playBeep(1200, 0.2);
-    } else if (input.value.length === 4) {
-      log.innerHTML += `<div style="color:red">Rechazado: ${input.value}</div>`;
-      input.value = '';
-    }
-  };
-  const baseCleanup = win._cleanup;
-  win._cleanup = () => { clearInterval(loop); if (baseCleanup) baseCleanup(); };
-}
+        function toggleStartMenu() {
+            startMenu.classList.toggle('open');
+            startBtn.classList.toggle('open');
+        }
+        function closeStartMenu() {
+            startMenu.classList.remove('open');
+            startBtn.classList.remove('open');
+        }
 
-// =====================================================================
-// DOCK Y BOOT
-// =====================================================================
-function initDock() {
-  document.querySelectorAll('[data-open]').forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation(); const type = btn.dataset.open;
-      playBeep(700, 0.05);
-      if (State.windows[type]) bringToFront(type);
-      else if (BUILDERS[type]) BUILDERS[type]();
-      closeDockMenu();
-    };
-  });
-  document.getElementById('menuToggle').onclick = (e) => {
-    e.stopPropagation();
-    document.getElementById('dockMenu').classList.toggle('open');
-  };
-  document.addEventListener('click', (e) => { if (!e.target.closest('.dock-menu-wrap')) closeDockMenu(); });
+        startBtn.addEventListener('click', (e) => { e.stopPropagation(); playSound(sfxClick); toggleStartMenu(); });
+        document.addEventListener('click', (e) => {
+            if (!startMenu.contains(e.target) && !startBtn.contains(e.target)) closeStartMenu();
+        });
 
-  document.getElementById('liteToggle').onclick = toggleLiteMode;
-  document.getElementById('helpMenuItem').onclick = () => {
-    document.getElementById('helpOverlay').style.display = 'flex';
-    closeDockMenu();
-  };
-  document.getElementById('modeToggle').onclick = () => {
-    document.body.classList.toggle('mobile-mode');
-    setTimeout(retileWindows, 100);
-  };
-}
-function closeDockMenu() { document.getElementById('dockMenu').classList.remove('open'); }
-window.closeHelp = () => document.getElementById('helpOverlay').style.display = 'none';
+        // --- VENTANA PROYECTO Y CONTROLES ---
+        function openWindow(project) {
+            playSound(sfxOpen);
+            modalTitle.textContent = project.name + " - Moustache Lab";
+            modalHeading.textContent = project.name;
+            modalDesc.textContent = project.desc;
+            modalLink.href = project.url;
+            modalIcon.textContent = project.icon;
+            
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            taskbarStatus.textContent = "Abierto: " + project.name;
+            
+            // Resetear estado al abrir
+            modal.classList.remove('maximized');
+            isMaximized = false;
+            maximizeBtn.textContent = '□';
+            
+            // Centrar
+            modal.style.top = '50%'; 
+            modal.style.left = '50%'; 
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.width = '400px';
+            modal.style.height = 'auto';
+        }
 
-async function init() {
-  const savedTheme = localStorage.getItem('tui-theme') || '#00ff9c'; applyTheme(savedTheme);
-  if (localStorage.getItem('tui-lite') === 'true') toggleLiteMode();
+        function closeWindow() {
+            playSound(sfxClose);
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            taskbarStatus.textContent = "";
+        }
+        closeBtn.addEventListener('click', closeWindow);
 
-  initMatrix(); initDock();
+        // Función Minimizar (Por ahora solo oculta y cambia el estado de la barra)
+        minimizeBtn.addEventListener('click', () => {
+            playSound(sfxClick);
+            modal.classList.remove('active');
+            // El overlay se queda activo si hay otras ventanas, pero aquí lo quitamos
+            overlay.classList.remove('active');
+            taskbarStatus.textContent = "Minimizado: " + modalHeading.textContent;
+        });
 
-  const bootLines = ['[ OK ] Initializing v7.8...', '[ OK ] Loading Modules...', '[ OK ] 🐱 MEOW. Ready.'];
-  const bEl = document.getElementById('bootLines');
-  for (let i = 0; i < bootLines.length; i++) {
-    bEl.innerHTML += `<div style="opacity:0;animation:bootLine 0.2s forwards;">${bootLines[i]}</div>`;
-    await new Promise(r => setTimeout(r, 200));
-  }
-  document.getElementById('bootScreen').style.opacity = 0;
-  setTimeout(() => document.getElementById('bootScreen').remove(), 600);
+        // Función Maximizar / Restaurar
+        maximizeBtn.addEventListener('click', () => {
+            playSound(sfxClick);
+            isMaximized = !isMaximized;
+            
+            if (isMaximized) {
+                modal.classList.add('maximized');
+                maximizeBtn.textContent = '❐'; // Símbolo de restaurar
+                // Guardar posición y tamaño previos
+                modal.dataset.prevTop = modal.style.top;
+                modal.dataset.prevLeft = modal.style.left;
+                modal.dataset.prevWidth = modal.style.width;
+                modal.dataset.prevHeight = modal.style.height;
+            } else {
+                modal.classList.remove('maximized');
+                maximizeBtn.textContent = '□';
+                // Restaurar posición
+                modal.style.top = '50%'; 
+                modal.style.left = '50%'; 
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.width = '400px';
+                modal.style.height = 'auto';
+            }
+        });
 
-  BUILDERS.system();
-  setTimeout(() => BUILDERS.about(), 300);
+        // --- VENTANA PAPELERA ---
+        function openTrash() {
+            playSound(sfxTrash);
+            trashWindow.classList.add('active');
+            overlay.classList.add('active');
+            taskbarStatus.textContent = "Papelera de Reciclaje";
+            trashWindow.style.top = '50%'; trashWindow.style.left = '50%'; trashWindow.style.transform = 'translate(-50%, -50%)';
+        }
+        function closeTrashWindow() {
+            playSound(sfxClose);
+            trashWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            taskbarStatus.textContent = "";
+        }
+        closeTrash.addEventListener('click', closeTrashWindow);
 
-  document.addEventListener('keydown', (e) => {
-    if (e.altKey) {
-      if (e.key === 'q' || e.key === 'Q') { if (State.focusedWindowId) closeWindow(State.focusedWindowId); e.preventDefault(); }
-      if (e.key === 'k' || e.key === 'K') { BUILDERS.shell(); e.preventDefault(); }
-      if (e.key === 'm' || e.key === 'M') { document.getElementById('modeToggle').click(); e.preventDefault(); }
-      if (['1','2','3','4'].includes(e.key)) {
-        const ids = Object.keys(State.windows);
-        const idx = parseInt(e.key) - 1;
-        if (ids[idx]) bringToFront(ids[idx]);
-        e.preventDefault();
-      }
-    }
-  });
-}
-init();
-</script>
+        // --- VENTANA CONFIGURACIÓN ---
+        function openConfig() {
+            playSound(sfxOpen);
+            const savedUser = localStorage.getItem('moustache_username') || '';
+            const isOnline = localStorage.getItem('moustache_online') !== 'false';
+            const hideSplash = localStorage.getItem('moustache_hide_splash') === 'true';
+            
+            usernameInput.value = savedUser;
+            onlineToggle.checked = isOnline;
+            updateOnlineUI(isOnline);
+            splashToggle.checked = hideSplash;
+            updateSplashUI(hideSplash);
+            updateSoundUI();
+
+            themeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+            });
+
+            configWindow.classList.add('active');
+            overlay.classList.add('active');
+            taskbarStatus.textContent = "Configuración abierta";
+            configWindow.style.top = '50%'; configWindow.style.left = '50%'; configWindow.style.transform = 'translate(-50%, -50%)';
+        }
+
+        function closeConfigWindow() {
+            playSound(sfxClose);
+            configWindow.classList.remove('active');
+            overlay.classList.remove('active');
+            taskbarStatus.textContent = "";
+        }
+        closeConfig.addEventListener('click', closeConfigWindow);
+        overlay.addEventListener('click', () => { closeWindow(); closeConfigWindow(); closeTrashWindow(); });
+
+        function updateOnlineUI(isOnline) {
+            onlineStatusText.textContent = isOnline ? "Online 🌐" : "Offline 📴";
+        }
+        function updateSplashUI(isHidden) {
+            splashStatusText.textContent = isHidden ? "Animación Desactivada" : "Animación Activada";
+        }
+
+        onlineToggle.addEventListener('change', (e) => updateOnlineUI(e.target.checked));
+        splashToggle.addEventListener('change', (e) => updateSplashUI(e.target.checked));
+        
+        soundToggle.addEventListener('change', (e) => {
+            soundEnabled = e.target.checked;
+            localStorage.setItem('moustache_sound', soundEnabled);
+            updateSoundUI();
+            if (soundEnabled) playSound(sfxClick);
+        });
+
+        muteBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('moustache_sound', soundEnabled);
+            updateSoundUI();
+            if (soundEnabled) playSound(sfxClick);
+        });
+
+        btnSaveConfig.addEventListener('click', () => {
+            playSound(sfxClick);
+            const newName = usernameInput.value.trim();
+            const isOnline = onlineToggle.checked;
+            const hideSplash = splashToggle.checked;
+
+            localStorage.setItem('moustache_username', newName);
+            localStorage.setItem('moustache_online', isOnline);
+            localStorage.setItem('moustache_hide_splash', hideSplash);
+
+            userDisplay.textContent = newName ? `👤 ${newName}` : '';
+            showToast("✅ Configuración guardada correctamente.");
+        });
+
+        btnClearCache.addEventListener('click', async () => {
+            playSound(sfxClick);
+            if(confirm("¿Estás seguro de que quieres borrar los datos locales y actualizar la caché? Se recargará la página.")) {
+                localStorage.clear();
+                if ('caches' in window) {
+                    try {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    } catch (err) { console.log("Error borrando cache:", err); }
+                }
+                showToast("🔄 Caché borrada. Recargando...");
+                setTimeout(() => { location.reload(); }, 1500);
+            }
+        });
+
+        // --- ARRASTRAR VENTANAS ---
+        function makeDraggable(header, windowElement) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            header.addEventListener('mousedown', (e) => {
+                // No arrastrar si está maximizada
+                if (windowElement.classList.contains('maximized')) return;
+                
+                isDragging = true;
+                const rect = windowElement.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                windowElement.style.transform = 'none';
+                windowElement.style.left = rect.left + 'px';
+                windowElement.style.top = rect.top + 'px';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                let newX = e.clientX - offsetX;
+                let newY = e.clientY - offsetY;
+                const maxX = window.innerWidth - windowElement.offsetWidth;
+                const maxY = window.innerHeight - windowElement.offsetHeight - 40;
+                if (newX < 0) newX = 0;
+                if (newY < 0) newY = 0;
+                if (newX > maxX) newX = maxX;
+                if (newY > maxY) newY = maxY;
+                windowElement.style.left = newX + 'px';
+                windowElement.style.top = newY + 'px';
+            });
+
+            document.addEventListener('mouseup', () => { isDragging = false; });
+        }
+
+        makeDraggable(document.getElementById('window-header'), modal);
+        makeDraggable(configHeader, configWindow);
+        makeDraggable(trashHeader, trashWindow);
+
+        // --- TOAST ---
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // --- RELOJ Y FECHA ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            clockDisplay.textContent = hours + ':' + minutes + ' ' + ampm;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            clockDisplay.title = now.toLocaleDateString('es-ES', options);
+        }
+        
+        // --- INICIALIZACIÓN ---
+        initSplash();
+        createDesktopIcons();
+        updateSoundUI();
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const savedUserInit = localStorage.getItem('moustache_username');
+        if (savedUserInit) { userDisplay.textContent = `👤 ${savedUserInit}`; }
+
+    </script>
 </body>
 </html>
